@@ -58,6 +58,8 @@
 #        make IEEE=1              # Will select debug options as long as a compiler is selected as well
 # e.g. make COMPILER=INTEL MPI_COMPILER=mpiifort C_MPI_COMPILER=mpiicc DEBUG=1 IEEE=1 # will compile with the intel compiler with intel debug and ieee flags included
 
+COMPILER=CRAY
+
 ifndef COMPILER
   MESSAGE=select a compiler to compile in OpenMP, e.g. make COMPILER=INTEL
 endif
@@ -169,41 +171,41 @@ clover_leaf: c_lover *.f90 Makefile
 	hydro.f90			\
 	visit.f90			\
 	clover_leaf.f90			\
-	accelerate_kernel_c.o           \
-	PdV_kernel_c.o                  \
-	flux_calc_kernel_c.o            \
-	revert_kernel_c.o               \
-	reset_field_kernel_c.o          \
-	ideal_gas_kernel_c.o            \
-	viscosity_kernel_c.o            \
-	advec_mom_kernel_c.o            \
-	advec_cell_kernel_c.o           \
-	calc_dt_kernel_c.o		\
-	field_summary_kernel_c.o	\
-	update_halo_kernel_c.o		\
-	timer_c.o                       \
-	pack_kernel_c.o			\
-	generate_chunk_kernel_c.o	\
-	initialise_chunk_kernel_c.o	\
+	ext_accelerate.o           \
+	ext_pdv.o                  \
+	ext_flux_calc.o            \
+	ext_revert.o               \
+	ext_reset_field.o          \
+	ext_ideal_gas.o            \
+	ext_viscosity.o            \
+	ext_advec_mom.o            \
+	ext_advec_cell.o           \
+	ext_calc_dt.o		\
+	ext_field_summary.o	\
+	ext_update_halo.o		\
+	ext_pack.o			\
+	ext_generate_chunk.o	\
+	ext_initialise_chunk.o	\
+	timer_c.o \
 	-o clover_leaf; echo $(MESSAGE)
 
 c_lover: *.c Makefile
 	$(C_MPI_COMPILER) $(CFLAGS)     \
-	accelerate_kernel_c.c           \
-	PdV_kernel_c.c                  \
-	flux_calc_kernel_c.c            \
-	revert_kernel_c.c               \
-	reset_field_kernel_c.c          \
-	ideal_gas_kernel_c.c            \
-	viscosity_kernel_c.c            \
-	advec_mom_kernel_c.c            \
-	advec_cell_kernel_c.c           \
-	calc_dt_kernel_c.c		\
-	field_summary_kernel_c.c	\
-	update_halo_kernel_c.c		\
-	pack_kernel_c.c			\
-	generate_chunk_kernel_c.c	\
-	initialise_chunk_kernel_c.c	\
+	ext_accelerate.c           \
+	ext_pdv.c                  \
+	ext_flux_calc.c            \
+	ext_revert.c               \
+	ext_reset_field.c          \
+	ext_ideal_gas.c            \
+	ext_viscosity.c            \
+	ext_advec_mom.c            \
+	ext_advec_cell.c           \
+	ext_calc_dt.c		\
+	ext_field_summary.c	\
+	ext_update_halo.c		\
+	ext_pack.c			\
+	ext_generate_chunk.c	\
+	ext_initialise_chunk.c	\
 	timer_c.c
 
 
