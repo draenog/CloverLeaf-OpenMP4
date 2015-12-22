@@ -17,6 +17,6 @@
  end_step=87
  test_problem 4
 
- use_c_kernels
+ !use_c_kernels
 
 *endclover
