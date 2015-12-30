@@ -92,7 +92,7 @@ void pdv_kernel_c_(int *prdct,
 
                 double total_flux = right_flux-left_flux+top_flux-bottom_flux;
 
-                volume_change[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)] =
+                double volume_change_s =
                     volume[FTNREF2D(j  ,k  ,x_max+4,x_min-2,y_min-2)] /
                     (volume[FTNREF2D(j  ,k  ,x_max+4,x_min-2,y_min-2)]+total_flux);
 
@@ -116,7 +116,7 @@ void pdv_kernel_c_(int *prdct,
 
                 density1[FTNREF2D(j  ,k  ,x_max+4,x_min-2,y_min-2)] =
                     density0[FTNREF2D(j  ,k  ,x_max+4,x_min-2,y_min-2)] *
-                    volume_change[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)];
+                    volume_change_s;
             }
         }
     }
@@ -158,7 +158,7 @@ void pdv_kernel_c_(int *prdct,
 
                 double total_flux = right_flux-left_flux+top_flux-bottom_flux;
 
-                volume_change[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)] =
+                double volume_change_s =
                     volume[FTNREF2D(j  ,k  ,x_max+4,x_min-2,y_min-2)] /
                     (volume[FTNREF2D(j  ,k  ,x_max+4,x_min-2,y_min-2)]+total_flux);
 
@@ -182,7 +182,7 @@ void pdv_kernel_c_(int *prdct,
 
                 density1[FTNREF2D(j  ,k  ,x_max+4,x_min-2,y_min-2)] =
                     density0[FTNREF2D(j  ,k  ,x_max+4,x_min-2,y_min-2)] *
-                    volume_change[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)];
+                    volume_change_s;
             }
         }
     }

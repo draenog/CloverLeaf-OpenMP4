@@ -79,7 +79,7 @@ CONTAINS
         jldt,                          &
         kldt,                          &
         small                          )
-    ELSEIF(use_C_kernels)THEN
+    ELSEIF(use_c_kernels)THEN
       CALL calc_dt_kernel_c(chunk%tiles(tile)%t_xmin,     &
         chunk%tiles(tile)%t_xmax,     &
         chunk%tiles(tile)%t_ymin,     &
