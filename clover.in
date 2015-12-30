@@ -16,7 +16,7 @@
  max_timestep=0.04
  end_step=87
  test_problem 4
-
+ profiler_on
  !use_c_kernels
 
 *endclover
