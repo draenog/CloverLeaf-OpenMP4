@@ -17,6 +17,6 @@
  end_step=87
  test_problem 4
  profiler_on
- !use_c_kernels
+ use_c_kernels
 
 *endclover
