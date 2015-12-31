@@ -26,8 +26,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "ftocmacros.h"
 #include <math.h>
+#include "ftocmacros.h"
+#include "ext_chunk.h"
 
 void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         int *chunk_neighbours,
@@ -48,8 +49,10 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         double *mass_flux_x,
         double *mass_flux_y,
         int *fields,
-        int *dpth)
+        int *dpth,
+        int* offload)
 {
+    int halo_offload = *offload && _chunk.offload;
     int x_min=*xmin;
     int x_max=*xmax;
     int y_min=*ymin;

@@ -24,8 +24,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "ftocmacros.h"
 #include <math.h>
+#include "ftocmacros.h"
+#include "ext_chunk.h"
 
 void field_summary_kernel_c_(int *xmin,
         int *xmax,
@@ -54,7 +55,7 @@ void field_summary_kernel_c_(int *xmin,
     double ke = 0.0;
     double press = 0.0;
 
-#pragma omp target teams distribute if(offload)
+#pragma omp target teams distribute if(_chunk.offload)
 #pragma omp parallel for reduction(+ : vol, mass, press, ie, ke)
     for (int k = y_min; k <= y_max; k++) 
     {

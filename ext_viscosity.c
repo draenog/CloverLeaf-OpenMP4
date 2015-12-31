@@ -25,8 +25,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "ftocmacros.h"
 #include <math.h>
+#include "ftocmacros.h"
+#include "ext_chunk.h"
 
 void viscosity_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         double *celldx,
@@ -42,7 +43,7 @@ void viscosity_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     int y_min=*ymin;
     int y_max=*ymax;
 
-#pragma omp target teams distribute if(offload)
+#pragma omp target teams distribute if(_chunk.offload)
 #pragma omp parallel for
     for (int k = y_min; k <= y_max; k++) 
     {

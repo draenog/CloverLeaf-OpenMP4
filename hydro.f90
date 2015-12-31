@@ -50,7 +50,7 @@ SUBROUTINE hydro
         step = step + 1
 
         !$OMP TARGET DATA
-        !$OMP MAP(to: 
+        !!$OMP MAP(to: 
         CALL timestep()
 
         CALL PdV(.TRUE.)

@@ -25,8 +25,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "ftocmacros.h"
 #include <math.h>
+#include "ext_chunk.h"
+#include "ftocmacros.h"
 
 void calc_dt_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         double *gsmall,double *gbig,double *mindt,
@@ -80,7 +81,7 @@ void calc_dt_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     double dt_min_val = g_big;
     double jk_control=1.1;
 
-#pragma omp target teams distribute if(offload)
+#pragma omp target teams distribute if(_chunk.offload)
 #pragma omp parallel for reduction(min: dt_min_val)
     for (int k = y_min; k <= y_max; k++)
     {

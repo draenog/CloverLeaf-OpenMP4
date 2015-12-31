@@ -197,6 +197,7 @@ clover_leaf: c_lover *.f90 Makefile
 	ext_pack.o			\
 	ext_generate_chunk.o	\
 	ext_initialise_chunk.o	\
+	ext_chunk.o \
 	timer_c.o \
 	-o clover_leaf; echo $(MESSAGE)
 
@@ -217,6 +218,7 @@ c_lover: *.c Makefile
 	ext_pack.c			\
 	ext_generate_chunk.c	\
 	ext_initialise_chunk.c	\
+	ext_chunk.c		\
 	timer_c.c
 
 

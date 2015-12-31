@@ -54,12 +54,16 @@ SUBROUTINE start
 
   CALL clover_get_num_chunks(number_of_chunks)
 
-
   CALL clover_decompose(grid%x_cells,grid%y_cells,left,right,bottom,top)
 
   !create the chunks
       
   chunk%task = parallel%task
+
+
+  IF (use_c_kernels) THEN
+      CALL ext_init()
+  ENDIF
 
   !chunk_task_responsible_for = parallel%task+1
 
@@ -133,7 +137,7 @@ SUBROUTINE start
   fields(FIELD_XVEL1)=1
   fields(FIELD_YVEL1)=1
 
-  CALL update_halo(fields,2)
+  CALL update_halo(fields,2,0)
 
   IF(parallel%boss)THEN
     WRITE(g_out,*)

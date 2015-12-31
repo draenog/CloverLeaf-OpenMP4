@@ -345,11 +345,11 @@ CONTAINS
 
   END SUBROUTINE clover_allocate_buffers
 
-  SUBROUTINE clover_exchange(fields,depth)
+  SUBROUTINE clover_exchange(fields,depth,offload)
 
     IMPLICIT NONE
 
-    INTEGER      :: fields(:),depth, tile, cnk
+    INTEGER      :: fields(:),depth, tile, cnk, offload
     INTEGER      :: left_right_offset(15),bottom_top_offset(15)
     INTEGER      :: request(4)
     INTEGER      :: message_count,err
@@ -379,7 +379,7 @@ CONTAINS
       ! Find left hand tiles
       DO tile=1,tiles_per_chunk
         IF(chunk%tiles(tile)%external_tile_mask(TILE_LEFT).EQ.1) THEN
-          CALL clover_pack_left(tile, fields, depth, left_right_offset)
+          CALL clover_pack_left(tile, fields, depth, left_right_offset, offload)
         ENDIF
       ENDDO
 
@@ -396,7 +396,7 @@ CONTAINS
       ! do right exchanges
       DO tile=1,tiles_per_chunk
         IF(chunk%tiles(tile)%external_tile_mask(TILE_RIGHT).EQ.1) THEN
-          CALL clover_pack_right(tile, fields, depth, left_right_offset)
+          CALL clover_pack_right(tile, fields, depth, left_right_offset, offload)
         ENDIF
       ENDDO
 
@@ -418,7 +418,7 @@ CONTAINS
         IF(chunk%tiles(tile)%external_tile_mask(TILE_LEFT).EQ.1) THEN
           CALL clover_unpack_left(fields, tile, depth,                      &
             chunk%left_rcv_buffer,             &
-            left_right_offset)
+            left_right_offset, offload)
         ENDIF
       ENDDO
     ENDIF
@@ -430,7 +430,7 @@ CONTAINS
         IF(chunk%tiles(tile)%external_tile_mask(TILE_RIGHT).EQ.1) THEN
           CALL clover_unpack_right(fields, tile, depth,                     &
             chunk%right_rcv_buffer,           &
-            left_right_offset)
+            left_right_offset, offload)
         ENDIF
       ENDDO
     ENDIF
@@ -442,7 +442,8 @@ CONTAINS
       ! do bottom exchanges
       DO tile=1,tiles_per_chunk
         IF(chunk%tiles(tile)%external_tile_mask(TILE_BOTTOM).EQ.1) THEN
-          CALL clover_pack_bottom(tile, fields, depth, bottom_top_offset)
+          CALL clover_pack_bottom(tile, fields, depth, bottom_top_offset,&
+          offload)
         ENDIF
       ENDDO
 
@@ -459,7 +460,7 @@ CONTAINS
       ! do top exchanges
       DO tile=1,tiles_per_chunk
         IF(chunk%tiles(tile)%external_tile_mask(TILE_TOP).EQ.1) THEN
-          CALL clover_pack_top(tile, fields, depth, bottom_top_offset)
+          CALL clover_pack_top(tile, fields, depth, bottom_top_offset, offload)
         ENDIF
       ENDDO
 
@@ -481,7 +482,7 @@ CONTAINS
         IF(chunk%tiles(tile)%external_tile_mask(TILE_TOP).EQ.1) THEN
           CALL clover_unpack_top(fields, tile, depth,                       &
             chunk%top_rcv_buffer,               &
-            bottom_top_offset)
+            bottom_top_offset, offload)
         ENDIF
       ENDDO
     ENDIF
@@ -492,20 +493,20 @@ CONTAINS
         IF(chunk%tiles(tile)%external_tile_mask(TILE_BOTTOM).EQ.1) THEN
           CALL clover_unpack_bottom(fields, tile, depth,                   &
             chunk%bottom_rcv_buffer,         &
-            bottom_top_offset)
+            bottom_top_offset, offload)
         ENDIF
       ENDDO
     ENDIF
 
   END SUBROUTINE clover_exchange
 
-  SUBROUTINE clover_pack_left(tile, fields, depth, left_right_offset)
+  SUBROUTINE clover_pack_left(tile, fields, depth, left_right_offset, offload)
 
     USE pack_kernel_module
 
     IMPLICIT NONE
 
-    INTEGER      :: fields(:),depth, tile, t_offset
+    INTEGER      :: fields(:),depth, tile, t_offset, offload
     INTEGER      :: left_right_offset(:)
   
   
@@ -703,7 +704,7 @@ CONTAINS
           chunk%left_snd_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_DENSITY0)+t_offset)
+          left_right_offset(FIELD_DENSITY0)+t_offset, offload)
     
       ENDIF
       IF(fields(FIELD_DENSITY1).EQ.1) THEN
@@ -715,7 +716,7 @@ CONTAINS
           chunk%left_snd_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_DENSITY1)+t_offset)
+          left_right_offset(FIELD_DENSITY1)+t_offset, offload)
     
       ENDIF
       IF(fields(FIELD_ENERGY0).EQ.1) THEN
@@ -727,7 +728,7 @@ CONTAINS
           chunk%left_snd_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_ENERGY0)+t_offset)
+          left_right_offset(FIELD_ENERGY0)+t_offset, offload)
    
       ENDIF
       IF(fields(FIELD_ENERGY1).EQ.1) THEN
@@ -739,7 +740,7 @@ CONTAINS
           chunk%left_snd_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_ENERGY1)+t_offset)
+          left_right_offset(FIELD_ENERGY1)+t_offset, offload)
     
       ENDIF
       IF(fields(FIELD_PRESSURE).EQ.1) THEN
@@ -751,7 +752,7 @@ CONTAINS
           chunk%left_snd_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_PRESSURE)+t_offset)
+          left_right_offset(FIELD_PRESSURE)+t_offset, offload)
     
       ENDIF
       IF(fields(FIELD_VISCOSITY).EQ.1) THEN
@@ -763,7 +764,7 @@ CONTAINS
           chunk%left_snd_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_VISCOSITY)+t_offset)
+          left_right_offset(FIELD_VISCOSITY)+t_offset, offload)
     
       ENDIF
       IF(fields(FIELD_SOUNDSPEED).EQ.1) THEN
@@ -775,7 +776,7 @@ CONTAINS
           chunk%left_snd_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_SOUNDSPEED)+t_offset)
+          left_right_offset(FIELD_SOUNDSPEED)+t_offset, offload)
     
       ENDIF
       IF(fields(FIELD_XVEL0).EQ.1) THEN
@@ -787,7 +788,7 @@ CONTAINS
           chunk%left_snd_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          left_right_offset(FIELD_XVEL0)+t_offset)
+          left_right_offset(FIELD_XVEL0)+t_offset, offload)
     
       ENDIF
       IF(fields(FIELD_XVEL1).EQ.1) THEN
@@ -799,7 +800,7 @@ CONTAINS
           chunk%left_snd_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          left_right_offset(FIELD_XVEL1)+t_offset)
+          left_right_offset(FIELD_XVEL1)+t_offset, offload)
     
       ENDIF
       IF(fields(FIELD_YVEL0).EQ.1) THEN
@@ -811,7 +812,7 @@ CONTAINS
           chunk%left_snd_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          left_right_offset(FIELD_YVEL0)+t_offset)
+          left_right_offset(FIELD_YVEL0)+t_offset, offload)
     
       ENDIF
       IF(fields(FIELD_YVEL1).EQ.1) THEN
@@ -823,7 +824,7 @@ CONTAINS
           chunk%left_snd_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          left_right_offset(FIELD_YVEL1)+t_offset)
+          left_right_offset(FIELD_YVEL1)+t_offset, offload)
     
       ENDIF
       IF(fields(FIELD_VOL_FLUX_X).EQ.1) THEN
@@ -835,7 +836,7 @@ CONTAINS
           chunk%left_snd_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, X_FACE_DATA,                           &
-          left_right_offset(FIELD_VOL_FLUX_X)+t_offset)
+          left_right_offset(FIELD_VOL_FLUX_X)+t_offset, offload)
     
       ENDIF
       IF(fields(FIELD_VOL_FLUX_Y).EQ.1) THEN
@@ -847,7 +848,7 @@ CONTAINS
           chunk%left_snd_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, Y_FACE_DATA,                           &
-          left_right_offset(FIELD_VOL_FLUX_Y)+t_offset)
+          left_right_offset(FIELD_VOL_FLUX_Y)+t_offset, offload)
     
       ENDIF
       IF(fields(FIELD_MASS_FLUX_X).EQ.1) THEN
@@ -859,7 +860,7 @@ CONTAINS
           chunk%left_snd_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, X_FACE_DATA,                           &
-          left_right_offset(FIELD_MASS_FLUX_X)+t_offset)
+          left_right_offset(FIELD_MASS_FLUX_X)+t_offset, offload)
     
       ENDIF
       IF(fields(FIELD_MASS_FLUX_Y).EQ.1) THEN
@@ -871,7 +872,7 @@ CONTAINS
           chunk%left_snd_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, Y_FACE_DATA,                           &
-          left_right_offset(FIELD_MASS_FLUX_Y)+t_offset)
+          left_right_offset(FIELD_MASS_FLUX_Y)+t_offset, offload)
     
       ENDIF
     ENDIF
@@ -901,13 +902,13 @@ CONTAINS
 
   SUBROUTINE clover_unpack_left(fields, tile, depth,                         &
                                 left_rcv_buffer,                              &
-                                left_right_offset)
+                                left_right_offset, offload)
 
     USE pack_kernel_module
 
     IMPLICIT NONE
 
-    INTEGER         :: fields(:), tile, depth, t_offset
+    INTEGER         :: fields(:), tile, depth, t_offset, offload
     INTEGER         :: left_right_offset(:)
     REAL(KIND=8)    :: left_rcv_buffer(:)
 
@@ -1105,7 +1106,7 @@ CONTAINS
           chunk%left_rcv_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_DENSITY0)+t_offset)
+          left_right_offset(FIELD_DENSITY0)+t_offset, offload)
     
       ENDIF
       IF(fields(FIELD_DENSITY1).EQ.1) THEN
@@ -1117,7 +1118,7 @@ CONTAINS
           chunk%left_rcv_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_DENSITY1)+t_offset)
+          left_right_offset(FIELD_DENSITY1)+t_offset, offload)
     
       ENDIF
       IF(fields(FIELD_ENERGY0).EQ.1) THEN
@@ -1129,7 +1130,7 @@ CONTAINS
           chunk%left_rcv_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_ENERGY0)+t_offset)
+          left_right_offset(FIELD_ENERGY0)+t_offset, offload)
     
       ENDIF
       IF(fields(FIELD_ENERGY1).EQ.1) THEN
@@ -1141,7 +1142,7 @@ CONTAINS
           chunk%left_rcv_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_ENERGY1)+t_offset)
+          left_right_offset(FIELD_ENERGY1)+t_offset, offload)
     
       ENDIF
       IF(fields(FIELD_PRESSURE).EQ.1) THEN
@@ -1153,7 +1154,7 @@ CONTAINS
           chunk%left_rcv_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_PRESSURE)+t_offset)
+          left_right_offset(FIELD_PRESSURE)+t_offset, offload)
     
       ENDIF
       IF(fields(FIELD_VISCOSITY).EQ.1) THEN
@@ -1165,7 +1166,7 @@ CONTAINS
           chunk%left_rcv_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_VISCOSITY)+t_offset)
+          left_right_offset(FIELD_VISCOSITY)+t_offset, offload)
     
       ENDIF
       IF(fields(FIELD_SOUNDSPEED).EQ.1) THEN
@@ -1177,7 +1178,7 @@ CONTAINS
           chunk%left_rcv_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_SOUNDSPEED)+t_offset)
+          left_right_offset(FIELD_SOUNDSPEED)+t_offset, offload)
    
       ENDIF
       IF(fields(FIELD_XVEL0).EQ.1) THEN
@@ -1189,7 +1190,7 @@ CONTAINS
           chunk%left_rcv_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          left_right_offset(FIELD_XVEL0)+t_offset)
+          left_right_offset(FIELD_XVEL0)+t_offset, offload)
     
       ENDIF
       IF(fields(FIELD_XVEL1).EQ.1) THEN
@@ -1201,7 +1202,7 @@ CONTAINS
           chunk%left_rcv_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          left_right_offset(FIELD_XVEL1)+t_offset)
+          left_right_offset(FIELD_XVEL1)+t_offset, offload)
     
       ENDIF
       IF(fields(FIELD_YVEL0).EQ.1) THEN
@@ -1213,7 +1214,7 @@ CONTAINS
           chunk%left_rcv_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          left_right_offset(FIELD_YVEL0)+t_offset)
+          left_right_offset(FIELD_YVEL0)+t_offset, offload)
     
       ENDIF
       IF(fields(FIELD_YVEL1).EQ.1) THEN
@@ -1225,7 +1226,7 @@ CONTAINS
           chunk%left_rcv_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          left_right_offset(FIELD_YVEL1)+t_offset)
+          left_right_offset(FIELD_YVEL1)+t_offset, offload)
     
       ENDIF
       IF(fields(FIELD_VOL_FLUX_X).EQ.1) THEN
@@ -1237,7 +1238,7 @@ CONTAINS
           chunk%left_rcv_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, X_FACE_DATA,                           &
-          left_right_offset(FIELD_VOL_FLUX_X)+t_offset)
+          left_right_offset(FIELD_VOL_FLUX_X)+t_offset, offload)
     
       ENDIF
       IF(fields(FIELD_VOL_FLUX_Y).EQ.1) THEN
@@ -1249,7 +1250,7 @@ CONTAINS
           chunk%left_rcv_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, Y_FACE_DATA,                           &
-          left_right_offset(FIELD_VOL_FLUX_Y)+t_offset)
+          left_right_offset(FIELD_VOL_FLUX_Y)+t_offset, offload)
     
       ENDIF
       IF(fields(FIELD_MASS_FLUX_X).EQ.1) THEN
@@ -1261,7 +1262,7 @@ CONTAINS
           chunk%left_rcv_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, X_FACE_DATA,                           &
-          left_right_offset(FIELD_MASS_FLUX_X)+t_offset)
+          left_right_offset(FIELD_MASS_FLUX_X)+t_offset, offload)
     
       ENDIF
       IF(fields(FIELD_MASS_FLUX_Y).EQ.1) THEN
@@ -1273,20 +1274,21 @@ CONTAINS
           chunk%left_rcv_buffer,                &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, Y_FACE_DATA,                           &
-          left_right_offset(FIELD_MASS_FLUX_Y)+t_offset)
+          left_right_offset(FIELD_MASS_FLUX_Y)+t_offset, offload)
     
       ENDIF
     ENDIF
 
   END SUBROUTINE clover_unpack_left
 
-  SUBROUTINE clover_pack_right(tile, fields, depth, left_right_offset)
+  SUBROUTINE clover_pack_right(tile, fields, depth, left_right_offset, offload)
 
     USE pack_kernel_module
 
     IMPLICIT NONE
 
-    INTEGER        :: tile, fields(:), depth, tot_packr, left_right_offset(:), t_offset
+    INTEGER        :: tile, fields(:), depth, tot_packr, left_right_offset(:), &
+    t_offset, offload
   
   
     t_offset = (chunk%tiles(tile)%t_bottom - chunk%bottom)*depth
@@ -1483,7 +1485,7 @@ CONTAINS
           chunk%right_snd_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_DENSITY0)+t_offset)
+          left_right_offset(FIELD_DENSITY0)+t_offset, offload)
    
       ENDIF
       IF(fields(FIELD_DENSITY1).EQ.1) THEN
@@ -1495,7 +1497,7 @@ CONTAINS
           chunk%right_snd_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_DENSITY1)+t_offset)
+          left_right_offset(FIELD_DENSITY1)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_ENERGY0).EQ.1) THEN
@@ -1507,7 +1509,7 @@ CONTAINS
           chunk%right_snd_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_ENERGY0)+t_offset)
+          left_right_offset(FIELD_ENERGY0)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_ENERGY1).EQ.1) THEN
@@ -1519,7 +1521,7 @@ CONTAINS
           chunk%right_snd_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_ENERGY1)+t_offset)
+          left_right_offset(FIELD_ENERGY1)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_PRESSURE).EQ.1) THEN
@@ -1531,7 +1533,7 @@ CONTAINS
           chunk%right_snd_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_PRESSURE)+t_offset)
+          left_right_offset(FIELD_PRESSURE)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_VISCOSITY).EQ.1) THEN
@@ -1543,7 +1545,7 @@ CONTAINS
           chunk%right_snd_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_VISCOSITY)+t_offset)
+          left_right_offset(FIELD_VISCOSITY)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_SOUNDSPEED).EQ.1) THEN
@@ -1555,7 +1557,7 @@ CONTAINS
           chunk%right_snd_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_SOUNDSPEED)+t_offset)
+          left_right_offset(FIELD_SOUNDSPEED)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_XVEL0).EQ.1) THEN
@@ -1567,7 +1569,7 @@ CONTAINS
           chunk%right_snd_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          left_right_offset(FIELD_XVEL0)+t_offset)
+          left_right_offset(FIELD_XVEL0)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_XVEL1).EQ.1) THEN
@@ -1579,7 +1581,7 @@ CONTAINS
           chunk%right_snd_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          left_right_offset(FIELD_XVEL1)+t_offset)
+          left_right_offset(FIELD_XVEL1)+t_offset, offload)
  
 
       ENDIF
@@ -1592,7 +1594,7 @@ CONTAINS
           chunk%right_snd_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          left_right_offset(FIELD_YVEL0)+t_offset)
+          left_right_offset(FIELD_YVEL0)+t_offset, offload)
       ELSE
 
       ENDIF
@@ -1605,7 +1607,7 @@ CONTAINS
           chunk%right_snd_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          left_right_offset(FIELD_YVEL1)+t_offset)
+          left_right_offset(FIELD_YVEL1)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_VOL_FLUX_X).EQ.1) THEN
@@ -1617,7 +1619,7 @@ CONTAINS
           chunk%right_snd_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, X_FACE_DATA,                           &
-          left_right_offset(FIELD_VOL_FLUX_X)+t_offset)
+          left_right_offset(FIELD_VOL_FLUX_X)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_VOL_FLUX_Y).EQ.1) THEN
@@ -1629,7 +1631,7 @@ CONTAINS
           chunk%right_snd_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, Y_FACE_DATA,                           &
-          left_right_offset(FIELD_VOL_FLUX_Y)+t_offset)
+          left_right_offset(FIELD_VOL_FLUX_Y)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_MASS_FLUX_X).EQ.1) THEN
@@ -1641,7 +1643,7 @@ CONTAINS
           chunk%right_snd_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, X_FACE_DATA,                           &
-          left_right_offset(FIELD_MASS_FLUX_X)+t_offset)
+          left_right_offset(FIELD_MASS_FLUX_X)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_MASS_FLUX_Y).EQ.1) THEN
@@ -1653,7 +1655,7 @@ CONTAINS
           chunk%right_snd_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, Y_FACE_DATA,                           &
-          left_right_offset(FIELD_MASS_FLUX_Y)+t_offset)
+          left_right_offset(FIELD_MASS_FLUX_Y)+t_offset, offload)
 
       ENDIF
     ENDIF
@@ -1684,13 +1686,14 @@ CONTAINS
 
   SUBROUTINE clover_unpack_right(fields, tile, depth,                          &
                                  right_rcv_buffer,                              &
-                                 left_right_offset)
+                                 left_right_offset, offload)
 
     USE pack_kernel_module
 
     IMPLICIT NONE
 
-    INTEGER         :: fields(:), tile, total_in_right_buff, depth, left_right_offset(:), t_offset
+    INTEGER         :: fields(:), tile, total_in_right_buff, depth, left_right_offset(:),&
+    t_offset, offload
     REAL(KIND=8)    :: right_rcv_buffer(:)
   
     t_offset = (chunk%tiles(tile)%t_bottom - chunk%bottom)*depth
@@ -1886,7 +1889,7 @@ CONTAINS
           chunk%right_rcv_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_DENSITY0)+t_offset)
+          left_right_offset(FIELD_DENSITY0)+t_offset, offload)
 
       ENDIF
 
@@ -1899,7 +1902,7 @@ CONTAINS
           chunk%right_rcv_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_DENSITY1)+t_offset)
+          left_right_offset(FIELD_DENSITY1)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_ENERGY0).EQ.1) THEN
@@ -1911,7 +1914,7 @@ CONTAINS
           chunk%right_rcv_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_ENERGY0)+t_offset)
+          left_right_offset(FIELD_ENERGY0)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_ENERGY1).EQ.1) THEN
@@ -1923,7 +1926,7 @@ CONTAINS
           chunk%right_rcv_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_ENERGY1)+t_offset)
+          left_right_offset(FIELD_ENERGY1)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_PRESSURE).EQ.1) THEN
@@ -1935,7 +1938,7 @@ CONTAINS
           chunk%right_rcv_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_PRESSURE)+t_offset)
+          left_right_offset(FIELD_PRESSURE)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_VISCOSITY).EQ.1) THEN
@@ -1947,7 +1950,7 @@ CONTAINS
           chunk%right_rcv_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_VISCOSITY)+t_offset)
+          left_right_offset(FIELD_VISCOSITY)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_SOUNDSPEED).EQ.1) THEN
@@ -1959,7 +1962,7 @@ CONTAINS
           chunk%right_rcv_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          left_right_offset(FIELD_SOUNDSPEED)+t_offset)
+          left_right_offset(FIELD_SOUNDSPEED)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_XVEL0).EQ.1) THEN
@@ -1971,7 +1974,7 @@ CONTAINS
           chunk%right_rcv_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          left_right_offset(FIELD_XVEL0)+t_offset)
+          left_right_offset(FIELD_XVEL0)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_XVEL1).EQ.1) THEN
@@ -1983,7 +1986,7 @@ CONTAINS
           chunk%right_rcv_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          left_right_offset(FIELD_XVEL1)+t_offset)
+          left_right_offset(FIELD_XVEL1)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_YVEL0).EQ.1) THEN
@@ -1995,7 +1998,7 @@ CONTAINS
           chunk%right_rcv_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          left_right_offset(FIELD_YVEL0)+t_offset)
+          left_right_offset(FIELD_YVEL0)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_YVEL1).EQ.1) THEN
@@ -2007,7 +2010,7 @@ CONTAINS
           chunk%right_rcv_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          left_right_offset(FIELD_YVEL1)+t_offset)
+          left_right_offset(FIELD_YVEL1)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_VOL_FLUX_X).EQ.1) THEN
@@ -2019,7 +2022,7 @@ CONTAINS
           chunk%right_rcv_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, X_FACE_DATA,                           &
-          left_right_offset(FIELD_VOL_FLUX_X)+t_offset)
+          left_right_offset(FIELD_VOL_FLUX_X)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_VOL_FLUX_Y).EQ.1) THEN
@@ -2031,7 +2034,7 @@ CONTAINS
           chunk%right_rcv_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, Y_FACE_DATA,                           &
-          left_right_offset(FIELD_VOL_FLUX_Y)+t_offset)
+          left_right_offset(FIELD_VOL_FLUX_Y)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_MASS_FLUX_X).EQ.1) THEN
@@ -2043,7 +2046,7 @@ CONTAINS
           chunk%right_rcv_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, X_FACE_DATA,                           &
-          left_right_offset(FIELD_MASS_FLUX_X)+t_offset)
+          left_right_offset(FIELD_MASS_FLUX_X)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_MASS_FLUX_Y).EQ.1) THEN
@@ -2055,20 +2058,21 @@ CONTAINS
           chunk%right_rcv_buffer,               &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, Y_FACE_DATA,                           &
-          left_right_offset(FIELD_MASS_FLUX_Y)+t_offset)
+          left_right_offset(FIELD_MASS_FLUX_Y)+t_offset, offload)
 
       ENDIF
     ENDIF
 
   END SUBROUTINE clover_unpack_right
 
-  SUBROUTINE clover_pack_top(tile, fields, depth, bottom_top_offset)
+  SUBROUTINE clover_pack_top(tile, fields, depth, bottom_top_offset, offload)
 
     USE pack_kernel_module
 
     IMPLICIT NONE
 
-    INTEGER        :: tile, fields(:), depth, bottom_top_offset(:), t_offset
+    INTEGER        :: tile, fields(:), depth, bottom_top_offset(:), &
+                    t_offset, offload
   
     t_offset = (chunk%tiles(tile)%t_left - chunk%left)*depth
     IF(use_fortran_kernels) THEN
@@ -2263,7 +2267,7 @@ CONTAINS
           chunk%top_snd_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_DENSITY0)+t_offset)
+          bottom_top_offset(FIELD_DENSITY0)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_DENSITY1).EQ.1) THEN
@@ -2275,7 +2279,7 @@ CONTAINS
           chunk%top_snd_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_DENSITY1)+t_offset)
+          bottom_top_offset(FIELD_DENSITY1)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_ENERGY0).EQ.1) THEN
@@ -2287,7 +2291,7 @@ CONTAINS
           chunk%top_snd_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_ENERGY0)+t_offset)
+          bottom_top_offset(FIELD_ENERGY0)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_ENERGY1).EQ.1) THEN
@@ -2299,7 +2303,7 @@ CONTAINS
           chunk%top_snd_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_ENERGY1)+t_offset)
+          bottom_top_offset(FIELD_ENERGY1)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_PRESSURE).EQ.1) THEN
@@ -2311,7 +2315,7 @@ CONTAINS
           chunk%top_snd_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_PRESSURE)+t_offset)
+          bottom_top_offset(FIELD_PRESSURE)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_VISCOSITY).EQ.1) THEN
@@ -2323,7 +2327,7 @@ CONTAINS
           chunk%top_snd_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_VISCOSITY)+t_offset)
+          bottom_top_offset(FIELD_VISCOSITY)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_SOUNDSPEED).EQ.1) THEN
@@ -2335,7 +2339,7 @@ CONTAINS
           chunk%top_snd_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_SOUNDSPEED)+t_offset)
+          bottom_top_offset(FIELD_SOUNDSPEED)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_XVEL0).EQ.1) THEN
@@ -2347,7 +2351,7 @@ CONTAINS
           chunk%top_snd_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          bottom_top_offset(FIELD_XVEL0)+t_offset)
+          bottom_top_offset(FIELD_XVEL0)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_XVEL1).EQ.1) THEN
@@ -2359,7 +2363,7 @@ CONTAINS
           chunk%top_snd_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          bottom_top_offset(FIELD_XVEL1)+t_offset)
+          bottom_top_offset(FIELD_XVEL1)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_YVEL0).EQ.1) THEN
@@ -2371,7 +2375,7 @@ CONTAINS
           chunk%top_snd_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          bottom_top_offset(FIELD_YVEL0)+t_offset)
+          bottom_top_offset(FIELD_YVEL0)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_YVEL1).EQ.1) THEN
@@ -2383,7 +2387,7 @@ CONTAINS
           chunk%top_snd_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          bottom_top_offset(FIELD_YVEL1)+t_offset)
+          bottom_top_offset(FIELD_YVEL1)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_VOL_FLUX_X).EQ.1) THEN
@@ -2395,7 +2399,7 @@ CONTAINS
           chunk%top_snd_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, X_FACE_DATA,                           &
-          bottom_top_offset(FIELD_VOL_FLUX_X)+t_offset)
+          bottom_top_offset(FIELD_VOL_FLUX_X)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_VOL_FLUX_Y).EQ.1) THEN
@@ -2407,7 +2411,7 @@ CONTAINS
           chunk%top_snd_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, Y_FACE_DATA,                           &
-          bottom_top_offset(FIELD_VOL_FLUX_Y)+t_offset)
+          bottom_top_offset(FIELD_VOL_FLUX_Y)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_MASS_FLUX_X).EQ.1) THEN
@@ -2419,7 +2423,7 @@ CONTAINS
           chunk%top_snd_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, X_FACE_DATA,                           &
-          bottom_top_offset(FIELD_MASS_FLUX_X)+t_offset)
+          bottom_top_offset(FIELD_MASS_FLUX_X)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_MASS_FLUX_Y).EQ.1) THEN
@@ -2431,7 +2435,7 @@ CONTAINS
           chunk%top_snd_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, Y_FACE_DATA,                           &
-          bottom_top_offset(FIELD_MASS_FLUX_Y)+t_offset)
+          bottom_top_offset(FIELD_MASS_FLUX_Y)+t_offset, offload)
 
       ENDIF
     ENDIF
@@ -2461,13 +2465,14 @@ CONTAINS
 
   SUBROUTINE clover_unpack_top(fields, tile, depth,                        &
                                top_rcv_buffer,                              &
-                               bottom_top_offset)
+                               bottom_top_offset, offload)
 
     USE pack_kernel_module
 
     IMPLICIT NONE
 
-    INTEGER         :: fields(:), tile, total_in_top_buff, depth, bottom_top_offset(:), t_offset
+    INTEGER         :: fields(:), tile, total_in_top_buff, depth, &
+    bottom_top_offset(:), t_offset, offload
     REAL(KIND=8)    :: top_rcv_buffer(:)
   
     t_offset = (chunk%tiles(tile)%t_left - chunk%left)*depth
@@ -2662,7 +2667,7 @@ CONTAINS
           chunk%top_rcv_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_DENSITY0)+t_offset)
+          bottom_top_offset(FIELD_DENSITY0)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_DENSITY1).EQ.1) THEN
@@ -2674,7 +2679,7 @@ CONTAINS
           chunk%top_rcv_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_DENSITY1)+t_offset)
+          bottom_top_offset(FIELD_DENSITY1)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_ENERGY0).EQ.1) THEN
@@ -2686,7 +2691,7 @@ CONTAINS
           chunk%top_rcv_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_ENERGY0)+t_offset)
+          bottom_top_offset(FIELD_ENERGY0)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_ENERGY1).EQ.1) THEN
@@ -2698,7 +2703,7 @@ CONTAINS
           chunk%top_rcv_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_ENERGY1)+t_offset)
+          bottom_top_offset(FIELD_ENERGY1)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_PRESSURE).EQ.1) THEN
@@ -2710,7 +2715,7 @@ CONTAINS
           chunk%top_rcv_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_PRESSURE)+t_offset)
+          bottom_top_offset(FIELD_PRESSURE)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_VISCOSITY).EQ.1) THEN
@@ -2722,7 +2727,7 @@ CONTAINS
           chunk%top_rcv_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_VISCOSITY)+t_offset)
+          bottom_top_offset(FIELD_VISCOSITY)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_SOUNDSPEED).EQ.1) THEN
@@ -2734,7 +2739,7 @@ CONTAINS
           chunk%top_rcv_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_SOUNDSPEED)+t_offset)
+          bottom_top_offset(FIELD_SOUNDSPEED)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_XVEL0).EQ.1) THEN
@@ -2746,7 +2751,7 @@ CONTAINS
           chunk%top_rcv_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          bottom_top_offset(FIELD_XVEL0)+t_offset)
+          bottom_top_offset(FIELD_XVEL0)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_XVEL1).EQ.1) THEN
@@ -2758,7 +2763,7 @@ CONTAINS
           chunk%top_rcv_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          bottom_top_offset(FIELD_XVEL1)+t_offset)
+          bottom_top_offset(FIELD_XVEL1)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_YVEL0).EQ.1) THEN
@@ -2770,7 +2775,7 @@ CONTAINS
           chunk%top_rcv_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          bottom_top_offset(FIELD_YVEL0)+t_offset)
+          bottom_top_offset(FIELD_YVEL0)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_YVEL1).EQ.1) THEN
@@ -2782,7 +2787,7 @@ CONTAINS
           chunk%top_rcv_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          bottom_top_offset(FIELD_YVEL1)+t_offset)
+          bottom_top_offset(FIELD_YVEL1)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_VOL_FLUX_X).EQ.1) THEN
@@ -2794,7 +2799,7 @@ CONTAINS
           chunk%top_rcv_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, X_FACE_DATA,                           &
-          bottom_top_offset(FIELD_VOL_FLUX_X)+t_offset)
+          bottom_top_offset(FIELD_VOL_FLUX_X)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_VOL_FLUX_Y).EQ.1) THEN
@@ -2806,7 +2811,7 @@ CONTAINS
           chunk%top_rcv_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, Y_FACE_DATA,                           &
-          bottom_top_offset(FIELD_VOL_FLUX_Y)+t_offset)
+          bottom_top_offset(FIELD_VOL_FLUX_Y)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_MASS_FLUX_X).EQ.1) THEN
@@ -2818,7 +2823,7 @@ CONTAINS
           chunk%top_rcv_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, X_FACE_DATA,                           &
-          bottom_top_offset(FIELD_MASS_FLUX_X)+t_offset)
+          bottom_top_offset(FIELD_MASS_FLUX_X)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_MASS_FLUX_Y).EQ.1) THEN
@@ -2830,7 +2835,7 @@ CONTAINS
           chunk%top_rcv_buffer,                 &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, Y_FACE_DATA,                           &
-          bottom_top_offset(FIELD_MASS_FLUX_Y)+t_offset)
+          bottom_top_offset(FIELD_MASS_FLUX_Y)+t_offset, offload)
 
       ENDIF
     ENDIF
@@ -2838,13 +2843,14 @@ CONTAINS
 
   END SUBROUTINE clover_unpack_top
 
-  SUBROUTINE clover_pack_bottom(tile, fields, depth, bottom_top_offset)
+  SUBROUTINE clover_pack_bottom(tile, fields, depth, bottom_top_offset, offload)
 
     USE pack_kernel_module
 
     IMPLICIT NONE
 
-    INTEGER        :: tile, fields(:), depth, tot_packb, bottom_top_offset(:), t_offset
+    INTEGER        :: tile, fields(:), depth, tot_packb, bottom_top_offset(:), &
+    t_offset, offload
   
     t_offset = (chunk%tiles(tile)%t_left - chunk%left)*depth
     IF(use_fortran_kernels) THEN
@@ -3040,7 +3046,7 @@ CONTAINS
           chunk%bottom_snd_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_DENSITY0)+t_offset)
+          bottom_top_offset(FIELD_DENSITY0)+t_offset, offload)
       ELSE
 
       ENDIF
@@ -3053,7 +3059,7 @@ CONTAINS
           chunk%bottom_snd_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_DENSITY1)+t_offset)
+          bottom_top_offset(FIELD_DENSITY1)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_ENERGY0).EQ.1) THEN
@@ -3065,7 +3071,7 @@ CONTAINS
           chunk%bottom_snd_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_ENERGY0)+t_offset)
+          bottom_top_offset(FIELD_ENERGY0)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_ENERGY1).EQ.1) THEN
@@ -3077,7 +3083,7 @@ CONTAINS
           chunk%bottom_snd_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_ENERGY1)+t_offset)
+          bottom_top_offset(FIELD_ENERGY1)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_PRESSURE).EQ.1) THEN
@@ -3089,7 +3095,7 @@ CONTAINS
           chunk%bottom_snd_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_PRESSURE)+t_offset)
+          bottom_top_offset(FIELD_PRESSURE)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_VISCOSITY).EQ.1) THEN
@@ -3101,7 +3107,7 @@ CONTAINS
           chunk%bottom_snd_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_VISCOSITY)+t_offset)
+          bottom_top_offset(FIELD_VISCOSITY)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_SOUNDSPEED).EQ.1) THEN
@@ -3113,7 +3119,7 @@ CONTAINS
           chunk%bottom_snd_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_SOUNDSPEED)+t_offset)
+          bottom_top_offset(FIELD_SOUNDSPEED)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_XVEL0).EQ.1) THEN
@@ -3125,7 +3131,7 @@ CONTAINS
           chunk%bottom_snd_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          bottom_top_offset(FIELD_XVEL0)+t_offset)
+          bottom_top_offset(FIELD_XVEL0)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_XVEL1).EQ.1) THEN
@@ -3137,7 +3143,7 @@ CONTAINS
           chunk%bottom_snd_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          bottom_top_offset(FIELD_XVEL1)+t_offset)
+          bottom_top_offset(FIELD_XVEL1)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_YVEL0).EQ.1) THEN
@@ -3149,7 +3155,7 @@ CONTAINS
           chunk%bottom_snd_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          bottom_top_offset(FIELD_YVEL0)+t_offset)
+          bottom_top_offset(FIELD_YVEL0)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_YVEL1).EQ.1) THEN
@@ -3161,7 +3167,7 @@ CONTAINS
           chunk%bottom_snd_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          bottom_top_offset(FIELD_YVEL1)+t_offset)
+          bottom_top_offset(FIELD_YVEL1)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_VOL_FLUX_X).EQ.1) THEN
@@ -3173,7 +3179,7 @@ CONTAINS
           chunk%bottom_snd_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, X_FACE_DATA,                           &
-          bottom_top_offset(FIELD_VOL_FLUX_X)+t_offset)
+          bottom_top_offset(FIELD_VOL_FLUX_X)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_VOL_FLUX_Y).EQ.1) THEN
@@ -3185,7 +3191,7 @@ CONTAINS
           chunk%bottom_snd_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, Y_FACE_DATA,                           &
-          bottom_top_offset(FIELD_VOL_FLUX_Y)+t_offset)
+          bottom_top_offset(FIELD_VOL_FLUX_Y)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_MASS_FLUX_X).EQ.1) THEN
@@ -3197,7 +3203,7 @@ CONTAINS
           chunk%bottom_snd_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, X_FACE_DATA,                           &
-          bottom_top_offset(FIELD_MASS_FLUX_X)+t_offset)
+          bottom_top_offset(FIELD_MASS_FLUX_X)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_MASS_FLUX_Y).EQ.1) THEN
@@ -3209,7 +3215,7 @@ CONTAINS
           chunk%bottom_snd_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, Y_FACE_DATA,                           &
-          bottom_top_offset(FIELD_MASS_FLUX_Y)+t_offset)
+          bottom_top_offset(FIELD_MASS_FLUX_Y)+t_offset, offload)
 
       ENDIF
     ENDIF
@@ -3240,13 +3246,13 @@ CONTAINS
 
   SUBROUTINE clover_unpack_bottom(fields, tile, depth,                        &
                                   bottom_rcv_buffer,                              &
-                                  bottom_top_offset)
+                                  bottom_top_offset, offload)
 
     USE pack_kernel_module
 
     IMPLICIT NONE
 
-    INTEGER         :: fields(:), tile, depth, bottom_top_offset(:), t_offset
+    INTEGER         :: fields(:), tile, depth, bottom_top_offset(:), t_offset, offload
     REAL(KIND=8)    :: bottom_rcv_buffer(:)
   
     t_offset = (chunk%tiles(tile)%t_left - chunk%left)*depth
@@ -3442,7 +3448,7 @@ CONTAINS
           chunk%bottom_rcv_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_DENSITY0)+t_offset)
+          bottom_top_offset(FIELD_DENSITY0)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_DENSITY1).EQ.1) THEN
@@ -3454,7 +3460,7 @@ CONTAINS
           chunk%bottom_rcv_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_DENSITY1)+t_offset)
+          bottom_top_offset(FIELD_DENSITY1)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_ENERGY0).EQ.1) THEN
@@ -3466,7 +3472,7 @@ CONTAINS
           chunk%bottom_rcv_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_ENERGY0)+t_offset)
+          bottom_top_offset(FIELD_ENERGY0)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_ENERGY1).EQ.1) THEN
@@ -3478,7 +3484,7 @@ CONTAINS
           chunk%bottom_rcv_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_ENERGY1)+t_offset)
+          bottom_top_offset(FIELD_ENERGY1)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_PRESSURE).EQ.1) THEN
@@ -3490,7 +3496,7 @@ CONTAINS
           chunk%bottom_rcv_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_PRESSURE)+t_offset)
+          bottom_top_offset(FIELD_PRESSURE)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_VISCOSITY).EQ.1) THEN
@@ -3502,7 +3508,7 @@ CONTAINS
           chunk%bottom_rcv_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_VISCOSITY)+t_offset)
+          bottom_top_offset(FIELD_VISCOSITY)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_SOUNDSPEED).EQ.1) THEN
@@ -3514,7 +3520,7 @@ CONTAINS
           chunk%bottom_rcv_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, CELL_DATA,                             &
-          bottom_top_offset(FIELD_SOUNDSPEED)+t_offset)
+          bottom_top_offset(FIELD_SOUNDSPEED)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_XVEL0).EQ.1) THEN
@@ -3526,7 +3532,7 @@ CONTAINS
           chunk%bottom_rcv_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          bottom_top_offset(FIELD_XVEL0)+t_offset)
+          bottom_top_offset(FIELD_XVEL0)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_XVEL1).EQ.1) THEN
@@ -3538,7 +3544,7 @@ CONTAINS
           chunk%bottom_rcv_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          bottom_top_offset(FIELD_XVEL1)+t_offset)
+          bottom_top_offset(FIELD_XVEL1)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_YVEL0).EQ.1) THEN
@@ -3550,7 +3556,7 @@ CONTAINS
           chunk%bottom_rcv_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          bottom_top_offset(FIELD_YVEL0)+t_offset)
+          bottom_top_offset(FIELD_YVEL0)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_YVEL1).EQ.1) THEN
@@ -3562,7 +3568,7 @@ CONTAINS
           chunk%bottom_rcv_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, VERTEX_DATA,                           &
-          bottom_top_offset(FIELD_YVEL1)+t_offset)
+          bottom_top_offset(FIELD_YVEL1)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_VOL_FLUX_X).EQ.1) THEN
@@ -3574,7 +3580,7 @@ CONTAINS
           chunk%bottom_rcv_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, X_FACE_DATA,                           &
-          bottom_top_offset(FIELD_VOL_FLUX_X)+t_offset)
+          bottom_top_offset(FIELD_VOL_FLUX_X)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_VOL_FLUX_Y).EQ.1) THEN
@@ -3586,7 +3592,7 @@ CONTAINS
           chunk%bottom_rcv_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, Y_FACE_DATA,                           &
-          bottom_top_offset(FIELD_VOL_FLUX_Y)+t_offset)
+          bottom_top_offset(FIELD_VOL_FLUX_Y)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_MASS_FLUX_X).EQ.1) THEN
@@ -3598,7 +3604,7 @@ CONTAINS
           chunk%bottom_rcv_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, X_FACE_DATA,                           &
-          bottom_top_offset(FIELD_MASS_FLUX_X)+t_offset)
+          bottom_top_offset(FIELD_MASS_FLUX_X)+t_offset, offload)
 
       ENDIF
       IF(fields(FIELD_MASS_FLUX_Y).EQ.1) THEN
@@ -3610,7 +3616,7 @@ CONTAINS
           chunk%bottom_rcv_buffer,              &
           CELL_DATA,VERTEX_DATA,X_FACE_DATA,Y_FACE_DATA,&
           depth, Y_FACE_DATA,                           &
-          bottom_top_offset(FIELD_MASS_FLUX_Y)+t_offset)
+          bottom_top_offset(FIELD_MASS_FLUX_Y)+t_offset, offload)
 
       ENDIF
 

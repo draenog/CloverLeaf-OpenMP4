@@ -23,15 +23,17 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "ftocmacros.h"
 #include <math.h>
+#include "ftocmacros.h"
+#include "ext_chunk.h"
 
 void clover_pack_message_left_c_(int *xmin,int *xmax,int *ymin,int *ymax, double *field,
         double *left_snd_buffer,
         int *CLL_DT,int *VRTX_DT,int *X_FC_DT,int *Y_FC_DT,
         int *dpth, int *fld_typ,
-        int *bffr_ffst)
+        int *bffr_ffst, int* offload)
 {
+    int pack_offload = *offload && _chunk.offload;
     int x_min=*xmin;
     int x_max=*xmax;
     int y_min=*ymin;
@@ -88,8 +90,9 @@ void clover_unpack_message_left_c_(int *xmin,int *xmax,int *ymin,int *ymax, doub
         double *left_rcv_buffer,
         int *CLL_DT,int *VRTX_DT,int *X_FC_DT,int *Y_FC_DT,
         int *dpth, int *fld_typ,
-        int *bffr_ffst)
+        int *bffr_ffst, int* offload)
 {
+    int pack_offload = *offload;
     int x_min=*xmin;
     int x_max=*xmax;
     int y_min=*ymin;
@@ -146,8 +149,9 @@ void clover_pack_message_right_c_(int *xmin,int *xmax,int *ymin,int *ymax, doubl
         double *right_snd_buffer,
         int *CLL_DT,int *VRTX_DT,int *X_FC_DT,int *Y_FC_DT,
         int *dpth, int *fld_typ,
-        int *bffr_ffst)
+        int *bffr_ffst, int* offload)
 {
+    int pack_offload = *offload;
     int x_min=*xmin;
     int x_max=*xmax;
     int y_min=*ymin;
@@ -203,8 +207,9 @@ void clover_unpack_message_right_c_(int *xmin,int *xmax,int *ymin,int *ymax, dou
         double *right_rcv_buffer,
         int *CLL_DT,int *VRTX_DT,int *X_FC_DT,int *Y_FC_DT,
         int *dpth, int *fld_typ,
-        int *bffr_ffst)
+        int *bffr_ffst, int* offload)
 {
+    int pack_offload = *offload;
     int x_min=*xmin;
     int x_max=*xmax;
     int y_min=*ymin;
@@ -260,8 +265,9 @@ void clover_pack_message_top_c_(int *xmin,int *xmax,int *ymin,int *ymax, double 
         double *top_snd_buffer,
         int *CLL_DT,int *VRTX_DT,int *X_FC_DT,int *Y_FC_DT,
         int *dpth, int *fld_typ,
-        int *bffr_ffst)
+        int *bffr_ffst, int* offload)
 {
+    int pack_offload = *offload;
     int x_min=*xmin;
     int x_max=*xmax;
     int y_min=*ymin;
@@ -316,8 +322,9 @@ void clover_pack_message_bottom_c_(int *xmin,int *xmax,int *ymin,int *ymax, doub
         double *bottom_snd_buffer,
         int *CLL_DT,int *VRTX_DT,int *X_FC_DT,int *Y_FC_DT,
         int *dpth, int *fld_typ,
-        int *bffr_ffst)
+        int *bffr_ffst, int* offload)
 {
+    int pack_offload = *offload;
     int x_min=*xmin;
     int x_max=*xmax;
     int y_min=*ymin;
@@ -372,8 +379,9 @@ void clover_unpack_message_bottom_c_(int *xmin,int *xmax,int *ymin,int *ymax, do
         double *bottom_rcv_buffer,
         int *CLL_DT,int *VRTX_DT,int *X_FC_DT,int *Y_FC_DT,
         int *dpth, int *fld_typ,
-        int *bffr_ffst)
+        int *bffr_ffst, int* offload)
 {
+    int pack_offload = *offload;
     int x_min=*xmin;
     int x_max=*xmax;
     int y_min=*ymin;
@@ -428,9 +436,10 @@ void clover_unpack_message_top_c_(int *xmin,int *xmax,int *ymin,int *ymax, doubl
         double *top_rcv_buffer,
         int *CLL_DT,int *VRTX_DT,int *X_FC_DT,int *Y_FC_DT,
         int *dpth, int *fld_typ,
-        int *bffr_ffst)
+        int *bffr_ffst, int* offload)
 
 {
+    int pack_offload = *offload;
     int x_min=*xmin;
     int x_max=*xmax;
     int y_min=*ymin;

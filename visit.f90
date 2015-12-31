@@ -72,7 +72,7 @@ SUBROUTINE visit
   fields(FIELD_PRESSURE)=1
   fields(FIELD_XVEL0)=1
   fields(FIELD_YVEL0)=1
-  CALL update_halo(fields,1)
+  CALL update_halo(fields,1,0)
 
   IF(profiler_on) kernel_time=timer()
   CALL viscosity()

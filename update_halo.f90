@@ -24,7 +24,7 @@ MODULE update_halo_module
 
 CONTAINS
 
-  SUBROUTINE update_halo(fields,depth)
+  SUBROUTINE update_halo(fields,depth,offload)
 
     USE clover_module
     USE update_tile_halo_module
@@ -32,15 +32,15 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER :: tile,fields(NUM_FIELDS),depth
+    INTEGER :: tile,fields(NUM_FIELDS),depth, offload
     REAL(KIND=8) :: kernel_time,timer
 
-      !TODO: fix the chunk comms phase
+    ! TODO: fix the chunk comms phase
+    !IF(profiler_on) kernel_time=timer()
+    !CALL update_tile_halo(fields,depth)
+    !IF(profiler_on) profiler%tile_halo_exchange=profiler%tile_halo_exchange+(timer()-kernel_time)
     IF(profiler_on) kernel_time=timer()
-    CALL update_tile_halo(fields,depth)
-    IF(profiler_on) profiler%tile_halo_exchange=profiler%tile_halo_exchange+(timer()-kernel_time)
-    IF(profiler_on) kernel_time=timer()
-    CALL clover_exchange(fields,depth)
+    CALL clover_exchange(fields,depth,offload)
     IF(profiler_on) profiler%mpi_halo_exchange=profiler%mpi_halo_exchange+(timer()-kernel_time)
  
     IF(profiler_on) kernel_time=timer()
@@ -105,7 +105,8 @@ CONTAINS
             chunk%tiles(tile)%field%mass_flux_x,    &
             chunk%tiles(tile)%field%mass_flux_y,    &
             fields,                         &
-            depth                          )
+            depth                          ,&
+            offload)
 
 
         ENDDO

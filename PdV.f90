@@ -128,7 +128,7 @@ CONTAINS
       IF(profiler_on) profiler%ideal_gas=profiler%ideal_gas+(timer()-kernel_time)
       fields=0
       fields(FIELD_PRESSURE)=1
-      CALL update_halo(fields,1)
+      CALL update_halo(fields,1,1)
     ENDIF
 
     IF ( predict ) THEN

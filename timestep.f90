@@ -69,7 +69,7 @@ CONTAINS
     fields(FIELD_DENSITY0)=1
     fields(FIELD_XVEL0)=1
     fields(FIELD_YVEL0)=1
-    CALL update_halo(fields,1)
+    CALL update_halo(fields,1,1)
 
     IF(profiler_on) kernel_time=timer()
     CALL viscosity()
@@ -77,7 +77,7 @@ CONTAINS
 
     fields=0
     fields(FIELD_VISCOSITY)=1
-    CALL update_halo(fields,1)
+    CALL update_halo(fields,1,1)
 
     IF(profiler_on) kernel_time=timer()
 
