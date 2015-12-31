@@ -56,12 +56,25 @@
 #        make clean               # Will clean up the directory
 #        make DEBUG=1             # Will select debug options. If a compiler is selected, it will use compiler specific debug options
 #        make IEEE=1              # Will select debug options as long as a compiler is selected as well
-# e.g. make COMPILER=INTEL MPI_COMPILER=mpiifort C_MPI_COMPILER=mpiicc DEBUG=1 IEEE=1 # will compile with the intel compiler with intel debug and ieee flags included
+# e.g. make COMPILER=INTEL MPI_F90=mpiifort MPI_C=mpiicc DEBUG=1 IEEE=1 # will compile with the intel compiler with intel debug and ieee flags included
 
-COMPILER=CRAY
+COMPILER	= CRAY
+MODE	 	= offload
+MPI_F90		= ftn
+MPI_C		= cc
+CPROFILER   = no
 
-ifndef COMPILER
-  MESSAGE=select a compiler to compile in OpenMP, e.g. make COMPILER=INTEL
+ifeq ($(MODE), native)
+   MIC = -mmic
+endif
+ifeq ($(MODE), offload)
+   MIC = -DOFFLOAD
+endif
+ifeq ($(MODE), none)
+   MIC = 
+endif
+ifeq ($(CPROFILER), yes)
+   OPTIONS += -DENABLE_PROFILING
 endif
 
 OMP_INTEL     = -openmp
@@ -118,13 +131,11 @@ ifdef IEEE
   I3E=$(I3E_$(COMPILER))
 endif
 
-FLAGS=$(FLAGS_$(COMPILER)) $(OMP) $(I3E) $(OPTIONS)
-CFLAGS=$(CFLAGS_$(COMPILER)) $(OMP) $(I3E) $(C_OPTIONS) -c
-MPI_COMPILER=ftn
-C_MPI_COMPILER=cc
+FLAGS=$(FLAGS_$(COMPILER)) $(OMP) $(I3E) $(OPTIONS) $(MIC)
+CFLAGS=$(CFLAGS_$(COMPILER)) $(OMP) $(I3E) $(C_OPTIONS) $(MIC) -c
 
 clover_leaf: c_lover *.f90 Makefile
-	$(MPI_COMPILER) $(FLAGS)	\
+	$(MPI_F90) $(FLAGS)	\
 	data.f90			\
 	definitions.f90			\
 	pack_kernel.f90			\
@@ -190,7 +201,7 @@ clover_leaf: c_lover *.f90 Makefile
 	-o clover_leaf; echo $(MESSAGE)
 
 c_lover: *.c Makefile
-	$(C_MPI_COMPILER) $(CFLAGS)     \
+	$(MPI_C) $(CFLAGS)     \
 	ext_accelerate.c           \
 	ext_pdv.c                  \
 	ext_flux_calc.c            \

@@ -49,6 +49,8 @@ SUBROUTINE hydro
 
         step = step + 1
 
+        !$OMP TARGET DATA
+        !$OMP MAP(to: 
         CALL timestep()
 
         CALL PdV(.TRUE.)
@@ -189,6 +191,8 @@ SUBROUTINE hydro
             EXIT
 
         END IF
+
+        !$OMP END TARGET DATA
 
         IF (parallel%boss) THEN
             wall_clock=timer()-timerstart

@@ -83,6 +83,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_BOTTOM,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
@@ -98,6 +99,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_TOP,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_TOP,1)]==EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
@@ -113,6 +115,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_LEFT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
@@ -128,6 +131,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_RIGHT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
@@ -146,6 +150,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_BOTTOM,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
@@ -161,6 +166,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_TOP,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
@@ -176,6 +182,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_LEFT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
@@ -191,6 +198,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_RIGHT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
@@ -209,6 +217,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_BOTTOM,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
@@ -224,6 +233,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_TOP,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
@@ -239,6 +249,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_LEFT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
@@ -254,6 +265,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_RIGHT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
@@ -272,6 +284,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_BOTTOM,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
@@ -287,6 +300,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_TOP,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
@@ -302,6 +316,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_LEFT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
@@ -317,6 +332,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_RIGHT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
@@ -335,6 +351,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_BOTTOM,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
@@ -350,6 +367,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_TOP,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
@@ -365,6 +383,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_LEFT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
@@ -380,6 +399,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_RIGHT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
@@ -398,6 +418,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_BOTTOM,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
@@ -413,6 +434,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_TOP,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
@@ -428,6 +450,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_LEFT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
@@ -443,6 +466,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_RIGHT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
@@ -461,6 +485,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_BOTTOM,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
@@ -476,6 +501,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_TOP,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
@@ -491,6 +517,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_LEFT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
@@ -506,6 +533,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_RIGHT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
@@ -523,6 +551,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_BOTTOM,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+1+depth; j++) 
             {
@@ -538,6 +567,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_TOP,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+1+depth; j++) 
             {
@@ -553,6 +583,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_LEFT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+1+depth; k++) 
             {
@@ -568,6 +599,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_RIGHT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+1+depth; k++) 
             {
@@ -586,6 +618,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_BOTTOM,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+1+depth; j++) 
             {
@@ -601,6 +634,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_TOP,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+1+depth; j++) 
             {
@@ -616,6 +650,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_LEFT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+1+depth; k++) 
             {
@@ -631,6 +666,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_RIGHT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+1+depth; k++) 
             {
@@ -649,6 +685,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_BOTTOM,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+1+depth; j++) 
             {
@@ -664,6 +701,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_TOP,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+1+depth; j++) 
             {
@@ -679,6 +717,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_LEFT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+1+depth; k++) 
             {
@@ -694,6 +733,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_RIGHT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+1+depth; k++) 
             {
@@ -712,6 +752,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_BOTTOM,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+1+depth; j++) 
             {
@@ -727,6 +768,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_TOP,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+1+depth; j++) 
             {
@@ -742,6 +784,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_LEFT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+1+depth; k++) 
             {
@@ -757,6 +800,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_RIGHT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+1+depth; k++) 
             {
@@ -775,6 +819,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_BOTTOM,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+1+depth; j++) 
             {
@@ -790,6 +835,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_TOP,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+1+depth; j++) 
             {
@@ -805,6 +851,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_LEFT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
@@ -820,6 +867,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_RIGHT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
@@ -838,6 +886,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_BOTTOM,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+1+depth; j++) 
             {
@@ -853,6 +902,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_TOP,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+1+depth; j++) 
             {
@@ -868,6 +918,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_LEFT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
@@ -883,6 +934,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_RIGHT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
@@ -901,6 +953,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_BOTTOM,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
@@ -916,6 +969,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_TOP,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
@@ -931,6 +985,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_LEFT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+1+depth; k++) 
             {
@@ -946,6 +1001,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_RIGHT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+1+depth; k++) 
             {
@@ -964,6 +1020,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_BOTTOM,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
@@ -979,6 +1036,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_TOP,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
@@ -994,6 +1052,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_LEFT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+1+depth; k++) 
             {
@@ -1009,6 +1068,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         if(chunk_neighbours[FTNREF1D(CHUNK_RIGHT,1)] == EXTERNAL_FACE && 
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
+#pragma omp target teams distribute if(halo_offload)
 #pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+1+depth; k++) 
             {

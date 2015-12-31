@@ -68,6 +68,7 @@ void advec_mom_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
 
     if(mom_sweep==1)
     {
+#pragma omp target teams distribute if(offload)
 #pragma omp parallel for
         for (int k = y_min-2; k <= y_max+2; k++)
         {
@@ -87,6 +88,7 @@ void advec_mom_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     } 
     else if(mom_sweep==2)
     {
+#pragma omp target teams distribute if(offload)
 #pragma omp parallel for
         for (int k = y_min-2; k <= y_max+2; k++)
         {
@@ -106,6 +108,7 @@ void advec_mom_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     } 
     else if(mom_sweep==3)
     {
+#pragma omp target teams distribute if(offload)
 #pragma omp parallel for 
         for (int k = y_min-2; k <= y_max+2; k++)
         {
@@ -123,6 +126,7 @@ void advec_mom_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     } 
     else if(mom_sweep==4)
     {
+#pragma omp target teams distribute if(offload)
 #pragma omp parallel for 
         for (int k = y_min-2; k <= y_max+2; k++)
         {
@@ -143,6 +147,7 @@ void advec_mom_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     {
         if(which_vel == 1)
         {
+#pragma omp target teams distribute if(offload)
 #pragma omp parallel for 
             for (int k = y_min; k <= y_max+1; k++) 
             {
@@ -156,6 +161,7 @@ void advec_mom_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                                 +mass_flux_x[FTNREF2D(j+1,k  ,x_max+5,x_min-2,y_min-2)]);
                 }
             }
+#pragma omp target teams distribute if(offload)
 #pragma omp parallel for 
             for (int k=y_min;k<=y_max+1;k++) {
 #pragma ivdep
@@ -178,6 +184,7 @@ void advec_mom_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
             }
         }
 
+#pragma omp target teams distribute if(offload)
 #pragma omp parallel for 
         for (int k = y_min; k <= y_max+1; k++)
         {
@@ -214,6 +221,7 @@ void advec_mom_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                     node_flux[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)];
             }
         }
+#pragma omp target teams distribute if(offload)
 #pragma omp parallel for 
         for (int k=y_min;k<=y_max+1;k++) 
         {
@@ -233,6 +241,7 @@ void advec_mom_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     {
         if(which_vel == 1)
         {
+#pragma omp target teams distribute if(offload)
 #pragma omp parallel for 
             for (int k=y_min-2;k<=y_max+2;k++) 
             {
@@ -246,6 +255,7 @@ void advec_mom_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                          mass_flux_y[FTNREF2D(j  ,k+1,x_max+4,x_min-2,y_min-2)]);
                 }
             }
+#pragma omp target teams distribute if(offload)
 #pragma omp parallel for 
             for (int k=y_min-1;k<=y_max+2;k++) {
 #pragma ivdep
@@ -268,6 +278,7 @@ void advec_mom_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
             }
         }
 
+#pragma omp target teams distribute if(offload)
 #pragma omp parallel for
         for (int k=y_min-1;k<=y_max+1;k++) 
         {
@@ -309,6 +320,7 @@ void advec_mom_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                     node_flux[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)];
             }
         }
+#pragma omp target teams distribute if(offload)
 #pragma omp parallel for 
         for (int k=y_min;k<=y_max+1;k++) 
         {

@@ -43,6 +43,7 @@ void flux_calc_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     int y_max=*ymax;
     double dt=*dbyt;
 
+#pragma omp target teams distribute if(offload)
 #pragma omp parallel for
     for (int k = y_min; k <= y_max; k++) 
     {
@@ -58,6 +59,7 @@ void flux_calc_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         }
     }
 
+#pragma omp target teams distribute if(offload)
 #pragma omp parallel for
     for (int k = y_min; k <= y_max+1; k++) 
     {
