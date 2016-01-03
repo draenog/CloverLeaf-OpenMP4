@@ -40,8 +40,9 @@ void revert_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     int x_max=*xmax;
     int y_min=*ymin;
     int y_max=*ymax;
+    int offload = _chunk.offload;
 
-#pragma omp target teams distribute if(_chunk.offload)
+#pragma omp target teams distribute if(offload)
 #pragma omp parallel for
     for (int k = y_min; k <= y_max; k++) 
     {
@@ -53,7 +54,7 @@ void revert_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         }
     }
 
-#pragma omp target teams distribute if(_chunk.offload)
+#pragma omp target teams distribute if(offload)
 #pragma omp parallel for 
     for (int k = y_min; k <= y_max; k++) 
     {

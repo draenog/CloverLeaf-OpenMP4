@@ -55,7 +55,9 @@ void field_summary_kernel_c_(int *xmin,
     double ke = 0.0;
     double press = 0.0;
 
-#pragma omp target teams distribute if(_chunk.offload)
+    int offload = _chunk.offload;
+
+#pragma omp target teams distribute if(offload)
 #pragma omp parallel for reduction(+ : vol, mass, press, ie, ke)
     for (int k = y_min; k <= y_max; k++) 
     {

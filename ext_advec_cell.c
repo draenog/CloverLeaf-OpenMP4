@@ -56,12 +56,13 @@ void advec_cell_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     int dir=*dr;
     int g_xdir=1,g_ydir=2;
     double one_by_six=1.0/6.0;
+    int offload = _chunk.offload;
 
     if(dir == g_xdir)
     {
         if(sweep_number == 1)
         {
-#pragma omp target teams distribute if(_chunk.offload)
+#pragma omp target teams distribute if(offload)
 #pragma omp parallel for 
             for (int k = y_min-2; k <= y_max+2; k++)
             {
@@ -85,7 +86,7 @@ void advec_cell_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         }
         else 
         {
-#pragma omp target teams distribute if(_chunk.offload)
+#pragma omp target teams distribute if(offload)
 #pragma omp parallel for
             for (int k = y_min-2; k <= y_max+2; k++) 
             {
@@ -101,7 +102,7 @@ void advec_cell_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 }
             }
         }
-#pragma omp target teams distribute if(_chunk.offload)
+#pragma omp target teams distribute if(offload)
 #pragma omp parallel for 
         for (int k = y_min; k <= y_max; k++)
         {
@@ -153,7 +154,7 @@ void advec_cell_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
             }
         }
 
-#pragma omp target teams distribute if(_chunk.offload)
+#pragma omp target teams distribute if(offload)
 #pragma omp parallel for
         for (int k = y_min; k <= y_max; k++)
         {
@@ -184,7 +185,7 @@ void advec_cell_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     {
         if(sweep_number == 1)
         {
-#pragma omp target teams distribute if(_chunk.offload)
+#pragma omp target teams distribute if(offload)
 #pragma omp parallel for
             for (int k = y_min-2; k <= y_max+2; k++)
             {
@@ -206,7 +207,7 @@ void advec_cell_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         }
         else 
         {
-#pragma omp target teams distribute if(_chunk.offload)
+#pragma omp target teams distribute if(offload)
 #pragma omp parallel for 
             for (int k = y_min-2; k <= y_max+2; k++)
             {
@@ -223,7 +224,7 @@ void advec_cell_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
             }
         }
 
-#pragma omp target teams distribute if(_chunk.offload)
+#pragma omp target teams distribute if(offload)
 #pragma omp parallel for
         for (int k = y_min; k <= y_max+2; k++)
         {
@@ -275,7 +276,7 @@ void advec_cell_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
             }
         }
 
-#pragma omp target teams distribute if(_chunk.offload)
+#pragma omp target teams distribute if(offload)
 #pragma omp parallel for
         for (int k = y_min; k <= y_max; k++)
         {

@@ -134,93 +134,23 @@ endif
 FLAGS=$(FLAGS_$(COMPILER)) $(OMP) $(I3E) $(OPTIONS) $(MIC)
 CFLAGS=$(CFLAGS_$(COMPILER)) $(OMP) $(I3E) $(C_OPTIONS) $(MIC) -c
 
-clover_leaf: c_lover *.f90 Makefile
-	$(MPI_F90) $(FLAGS)	\
-	data.f90			\
-	definitions.f90			\
-	pack_kernel.f90			\
-	clover.f90			\
-	report.f90			\
-	timer.f90			\
-	parse.f90			\
-	read_input.f90			\
-	initialise_chunk_kernel.f90	\
-	initialise_chunk.f90		\
-	build_field.f90			\
-	update_tile_halo_kernel.f90	\
-	update_tile_halo.f90		\
-	update_halo_kernel.f90		\
-	update_halo.f90			\
-	ideal_gas_kernel.f90		\
-	ideal_gas.f90			\
-	start.f90			\
-	generate_chunk_kernel.f90	\
-	generate_chunk.f90		\
-	initialise.f90			\
-	field_summary_kernel.f90	\
-	field_summary.f90		\
-	viscosity_kernel.f90		\
-	viscosity.f90			\
-	calc_dt_kernel.f90		\
-	calc_dt.f90			\
-	timestep.f90			\
-	accelerate_kernel.f90		\
-	accelerate.f90			\
-	revert_kernel.f90		\
-	revert.f90			\
-	PdV_kernel.f90			\
-	PdV.f90				\
-	flux_calc_kernel.f90		\
-	flux_calc.f90			\
-	advec_cell_kernel.f90		\
-	advec_cell_driver.f90		\
-	advec_mom_kernel.f90		\
-	advec_mom_driver.f90		\
-	advection.f90			\
-	reset_field_kernel.f90		\
-	reset_field.f90			\
-	hydro.f90			\
-	visit.f90			\
-	clover_leaf.f90			\
-	ext_accelerate.o           \
-	ext_pdv.o                  \
-	ext_flux_calc.o            \
-	ext_revert.o               \
-	ext_reset_field.o          \
-	ext_ideal_gas.o            \
-	ext_viscosity.o            \
-	ext_advec_mom.o            \
-	ext_advec_cell.o           \
-	ext_calc_dt.o		\
-	ext_field_summary.o	\
-	ext_update_halo.o		\
-	ext_pack.o			\
-	ext_generate_chunk.o	\
-	ext_initialise_chunk.o	\
-	ext_chunk.o \
-	timer_c.o \
-	-o clover_leaf; echo $(MESSAGE)
+OBJ	= $(patsubst %.c,%.o, $(wildcard *.c))
+OBJ	+= $(patsubst %.f90,%.o, $(wildcard *.f90))
 
-c_lover: *.c Makefile
-	$(MPI_C) $(CFLAGS)     \
-	ext_accelerate.c           \
-	ext_pdv.c                  \
-	ext_flux_calc.c            \
-	ext_revert.c               \
-	ext_reset_field.c          \
-	ext_ideal_gas.c            \
-	ext_viscosity.c            \
-	ext_advec_mom.c            \
-	ext_advec_cell.c           \
-	ext_calc_dt.c		\
-	ext_field_summary.c	\
-	ext_update_halo.c		\
-	ext_pack.c			\
-	ext_generate_chunk.c	\
-	ext_initialise_chunk.c	\
-	ext_chunk.c		\
-	timer_c.c
+clover_leaf: Makefile $(OBJ)
+	$(MPI_F90) $(FLAGS)	$(OBJ) $(LDLIBS) -o clover_leaf
+	@echo $(MESSAGE)
 
+include make.deps
+
+%_module.mod: %.f90 %.o
+	@true
+%.o: %.f90 Makefile make.deps
+	$(MPI_F90) $(FLAGS) -c $<
+%.o: %.c Makefile make.deps
+	$(MPI_C) $(CFLAGS) -c $<
+
+.PHONY: clean
 
 clean:
 	rm -f *.o *.mod *genmod* *cuda* *hmd* *.cu *.oo *.hmf *.lst *.cub *.ptx *.cl clover_leaf

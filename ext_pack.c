@@ -92,7 +92,7 @@ void clover_unpack_message_left_c_(int *xmin,int *xmax,int *ymin,int *ymax, doub
         int *dpth, int *fld_typ,
         int *bffr_ffst, int* offload)
 {
-    int pack_offload = *offload;
+    int pack_offload = *offload && _chunk.offload;
     int x_min=*xmin;
     int x_max=*xmax;
     int y_min=*ymin;
@@ -151,7 +151,7 @@ void clover_pack_message_right_c_(int *xmin,int *xmax,int *ymin,int *ymax, doubl
         int *dpth, int *fld_typ,
         int *bffr_ffst, int* offload)
 {
-    int pack_offload = *offload;
+    int pack_offload = *offload && _chunk.offload;
     int x_min=*xmin;
     int x_max=*xmax;
     int y_min=*ymin;
@@ -209,7 +209,7 @@ void clover_unpack_message_right_c_(int *xmin,int *xmax,int *ymin,int *ymax, dou
         int *dpth, int *fld_typ,
         int *bffr_ffst, int* offload)
 {
-    int pack_offload = *offload;
+    int pack_offload = *offload && _chunk.offload;
     int x_min=*xmin;
     int x_max=*xmax;
     int y_min=*ymin;
@@ -267,7 +267,7 @@ void clover_pack_message_top_c_(int *xmin,int *xmax,int *ymin,int *ymax, double 
         int *dpth, int *fld_typ,
         int *bffr_ffst, int* offload)
 {
-    int pack_offload = *offload;
+    int pack_offload = *offload && _chunk.offload;
     int x_min=*xmin;
     int x_max=*xmax;
     int y_min=*ymin;
@@ -324,7 +324,7 @@ void clover_pack_message_bottom_c_(int *xmin,int *xmax,int *ymin,int *ymax, doub
         int *dpth, int *fld_typ,
         int *bffr_ffst, int* offload)
 {
-    int pack_offload = *offload;
+    int pack_offload = *offload && _chunk.offload;
     int x_min=*xmin;
     int x_max=*xmax;
     int y_min=*ymin;
@@ -381,7 +381,7 @@ void clover_unpack_message_bottom_c_(int *xmin,int *xmax,int *ymin,int *ymax, do
         int *dpth, int *fld_typ,
         int *bffr_ffst, int* offload)
 {
-    int pack_offload = *offload;
+    int pack_offload = *offload && _chunk.offload;
     int x_min=*xmin;
     int x_max=*xmax;
     int y_min=*ymin;
@@ -439,7 +439,7 @@ void clover_unpack_message_top_c_(int *xmin,int *xmax,int *ymin,int *ymax, doubl
         int *bffr_ffst, int* offload)
 
 {
-    int pack_offload = *offload;
+    int pack_offload = *offload && _chunk.offload;
     int x_min=*xmin;
     int x_max=*xmax;
     int y_min=*ymin;
