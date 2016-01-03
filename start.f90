@@ -60,10 +60,11 @@ SUBROUTINE start
       
   chunk%task = parallel%task
 
-
   IF (use_c_kernels) THEN
       CALL ext_init()
   ENDIF
+
+  WRITE(0,*) "fdjskfldjsakl"
 
   !chunk_task_responsible_for = parallel%task+1
 
@@ -82,16 +83,12 @@ SUBROUTINE start
   chunk%y_min = 1
   chunk%x_max = x_cells
   chunk%y_max = y_cells
-    
-    
-
 
   ! create the tiles
   ALLOCATE( chunk%tiles(1:tiles_per_chunk) )
 
   CALL clover_tile_decompose(x_cells, y_cells)
     
-
 
   CALL build_field()
 
@@ -119,9 +116,8 @@ SUBROUTINE start
   profiler_off=profiler_on
   profiler_on=.FALSE.
 
-
   DO tile = 1, tiles_per_chunk
-    CALL ideal_gas(tile,.FALSE.)
+    CALL ideal_gas(tile,.FALSE.,0)
   END DO
 
   ! Prime all halo data for the first step
@@ -144,7 +140,7 @@ SUBROUTINE start
     WRITE(g_out,*) 'Problem initialised and generated'
   ENDIF
 
-  CALL field_summary()
+  CALL field_summary(0)
 
   IF(visit_frequency.NE.0) CALL visit()
 

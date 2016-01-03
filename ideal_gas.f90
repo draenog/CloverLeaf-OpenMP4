@@ -24,14 +24,14 @@ MODULE ideal_gas_module
 
 CONTAINS
 
-  SUBROUTINE ideal_gas(tile,predict)
+  SUBROUTINE ideal_gas(tile,predict,offload)
 
     USE clover_module
     USE ideal_gas_kernel_module
 
     IMPLICIT NONE
 
-    INTEGER :: tile
+    INTEGER :: tile, offload
 
     LOGICAl :: predict
 
@@ -68,7 +68,8 @@ CONTAINS
           chunk%tiles(tile)%field%density0,   &
           chunk%tiles(tile)%field%energy0,    &
           chunk%tiles(tile)%field%pressure,   &
-          chunk%tiles(tile)%field%soundspeed  )
+          chunk%tiles(tile)%field%soundspeed, &
+          offload)
 
       ELSE
         CALL ideal_gas_kernel_c(chunk%tiles(tile)%t_xmin,    &
@@ -78,7 +79,8 @@ CONTAINS
           chunk%tiles(tile)%field%density1,   &
           chunk%tiles(tile)%field%energy1,    &
           chunk%tiles(tile)%field%pressure,   &
-          chunk%tiles(tile)%field%soundspeed  )
+          chunk%tiles(tile)%field%soundspeed,  &
+          offload )
 
       ENDIF
     ENDIF

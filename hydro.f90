@@ -115,12 +115,6 @@ SUBROUTINE hydro_step(xmin, ymin, xmax, ymax, density0, density1, &
 
     timerstart = timer()
 
-    DO
-
-    step_time = timer()
-
-    step = step + 1
-
     !$OMP TARGET DATA &
     !$OMP MAP(to: density0, density1, energy0, energy1, pressure) &
     !$OMP MAP(to: soundspeed, xvel0, xvel1, yvel0, yvel1, vol_flux_x) &
@@ -130,6 +124,13 @@ SUBROUTINE hydro_step(xmin, ymin, xmax, ymax, density0, density1, &
     !$OMP MAP(to: vertexy, celldx, celldy, vertexdx, vertexdy, xarea) &
     !$OMP MAP(to: yarea, volume)
 
+    DO
+
+    step_time = timer()
+
+    step = step + 1
+
+    
     CALL timestep()
 
     CALL PdV(.TRUE.)
@@ -271,8 +272,6 @@ SUBROUTINE hydro_step(xmin, ymin, xmax, ymax, density0, density1, &
 
     END IF
 
-    !$OMP END TARGET DATA
-
     IF (parallel%boss) THEN
         wall_clock=timer()-timerstart
         step_clock=timer()-step_time
@@ -290,5 +289,7 @@ SUBROUTINE hydro_step(xmin, ymin, xmax, ymax, density0, density1, &
     END IF
 
     END DO
+
+    !$OMP END TARGET DATA
 
     END SUBROUTINE hydro_step

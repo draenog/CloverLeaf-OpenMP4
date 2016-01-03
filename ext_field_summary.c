@@ -42,8 +42,11 @@ void field_summary_kernel_c_(int *xmin,
         double *mss,
         double *ien,
         double *ken,
-        double *prss)
+        double *prss,
+        int* offload)
 {
+    printf("in %s\n", __func__);
+
     int x_min=*xmin;
     int x_max=*xmax;
     int y_min=*ymin;
@@ -55,9 +58,9 @@ void field_summary_kernel_c_(int *xmin,
     double ke = 0.0;
     double press = 0.0;
 
-    int offload = _chunk.offload;
+    int field_offload = _chunk.offload && *offload;
 
-#pragma omp target teams distribute if(offload)
+#pragma omp target teams distribute if(field_offload)
 #pragma omp parallel for reduction(+ : vol, mass, press, ie, ke)
     for (int k = y_min; k <= y_max; k++) 
     {

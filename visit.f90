@@ -64,7 +64,7 @@ SUBROUTINE visit
 
   IF(profiler_on) kernel_time=timer()
   DO tile=1,tiles_per_chunk
-    CALL ideal_gas(tile,.FALSE.)
+    CALL ideal_gas(tile,.FALSE.,0)
   ENDDO
   IF(profiler_on) profiler%ideal_gas=profiler%ideal_gas+(timer()-kernel_time)
 

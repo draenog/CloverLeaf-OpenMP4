@@ -52,6 +52,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         int *dpth,
         int* offload)
 {
+    printf("in %s\n", __func__);
     int halo_offload = *offload && _chunk.offload;
     int x_min=*xmin;
     int x_max=*xmax;

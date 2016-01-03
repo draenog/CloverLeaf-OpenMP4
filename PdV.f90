@@ -122,7 +122,7 @@ CONTAINS
     IF(predict)THEN
       IF(profiler_on) kernel_time=timer()
       DO tile=1,tiles_per_chunk
-        CALL ideal_gas(tile,.TRUE.)
+        CALL ideal_gas(tile,.TRUE.,1)
       ENDDO
 
       IF(profiler_on) profiler%ideal_gas=profiler%ideal_gas+(timer()-kernel_time)

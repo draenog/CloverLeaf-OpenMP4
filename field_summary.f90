@@ -24,7 +24,7 @@
 !>  Note the reference solution is the value returned from an Intel compiler with
 !>  ieee options set on a single core crun.
 
-SUBROUTINE field_summary()
+SUBROUTINE field_summary(offload)
 
   USE clover_module
   USE ideal_gas_module
@@ -38,7 +38,7 @@ SUBROUTINE field_summary()
 
   !$ INTEGER :: OMP_GET_THREAD_NUM
 
-  INTEGER      :: tile
+  INTEGER      :: tile, offload
 
   REAL(KIND=8) :: kernel_time,timer
 
@@ -51,7 +51,7 @@ SUBROUTINE field_summary()
 
   IF(profiler_on) kernel_time=timer()
   DO tile=1,tiles_per_chunk
-    CALL ideal_gas(tile,.FALSE.)
+    CALL ideal_gas(tile,.FALSE.,offload)
   ENDDO
 
   IF(profiler_on) profiler%ideal_gas=profiler%ideal_gas+(timer()-kernel_time)
@@ -98,7 +98,7 @@ SUBROUTINE field_summary()
         chunk%tiles(tile)%field%pressure,                &
         chunk%tiles(tile)%field%xvel0,                   &
         chunk%tiles(tile)%field%yvel0,                   &
-        vol,mass,ie,ke,press                     )
+        vol,mass,ie,ke,press,offload)
       t_vol=t_vol+vol
       t_mass=t_mass+mass
       t_ie=t_ie+ie

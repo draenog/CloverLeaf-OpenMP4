@@ -32,15 +32,18 @@ void ideal_gas_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         double *density,
         double *energy,
         double *pressure,
-        double *soundspeed)
+        double *soundspeed,
+        int* offload)
 {
     int x_min=*xmin;
     int x_max=*xmax;
     int y_min=*ymin;
     int y_max=*ymax;
-    int offload = _chunk.offload;
+    int ideal_offload = *offload && _chunk.offload;
 
-#pragma omp target teams distribute if(offload)
+    printf("in %s\n", __func__);
+
+#pragma omp target teams distribute if(ideal_offload)
 #pragma omp parallel for
     for (int k = y_min; k <= y_max; k++) 
     {
