@@ -200,11 +200,6 @@ MODULE definitions_module
       ,top_boundary
   END TYPE chunk_type
 
-
-
-
-
-
   TYPE(chunk_type)       :: chunk
   INTEGER                :: number_of_chunks
 

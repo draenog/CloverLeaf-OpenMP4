@@ -41,13 +41,13 @@ void ideal_gas_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     int y_max=*ymax;
     int ideal_offload = *offload && _chunk.offload;
 
-    printf("in %s\n", __func__);
+    printf("in %s offload: %d\n", __func__, ideal_offload);
 
 #pragma omp target teams distribute if(ideal_offload)
 #pragma omp parallel for
     for (int k = y_min; k <= y_max; k++) 
     {
-#pragma ivdep
+//#pragma ivdep
         for (int j = x_min; j <= x_max; j++) 
         { 
             double v = 1.0/density[FTNREF2D(j  ,k  ,x_max+4,x_min-2,y_min-2)];
@@ -65,4 +65,6 @@ void ideal_gas_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 sqrt(sound_speed_squared);
         }
     }
+
+    printf("out %s offload: %d\n", __func__, ideal_offload);
 }

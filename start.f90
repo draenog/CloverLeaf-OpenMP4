@@ -61,10 +61,8 @@ SUBROUTINE start
   chunk%task = parallel%task
 
   IF (use_c_kernels) THEN
-      CALL ext_init()
+      CALL ext_init(g_offload)
   ENDIF
-
-  WRITE(0,*) "fdjskfldjsakl"
 
   !chunk_task_responsible_for = parallel%task+1
 

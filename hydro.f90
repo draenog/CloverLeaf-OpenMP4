@@ -115,7 +115,9 @@ SUBROUTINE hydro_step(xmin, ymin, xmax, ymax, density0, density1, &
 
     timerstart = timer()
 
-    !$OMP TARGET DATA &
+    WRITE(0,*) "IN HYDRO"
+
+    !$OMP TARGET DATA IF(g_offload.EQ.1)&
     !$OMP MAP(to: density0, density1, energy0, energy1, pressure) &
     !$OMP MAP(to: soundspeed, xvel0, xvel1, yvel0, yvel1, vol_flux_x) &
     !$OMP MAP(to: mass_flux_x, vol_flux_y, mass_flux_y, work_array1) &
@@ -129,7 +131,6 @@ SUBROUTINE hydro_step(xmin, ymin, xmax, ymax, density0, density1, &
     step_time = timer()
 
     step = step + 1
-
     
     CALL timestep()
 
