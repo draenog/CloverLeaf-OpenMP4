@@ -82,11 +82,12 @@ void calc_dt_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     double dt_min_val = g_big;
     double jk_control=1.1;
 
-#pragma omp target teams distribute if(offload)
-#pragma omp parallel for reduction(min: dt_min_val)
+#pragma omp target teams distribute \
+    if(offload) reduction(min: dt_min_val)
+//#pragma omp parallel for
     for (int k = y_min; k <= y_max; k++)
     {
-#pragma simd
+#pragma omp simd
 #pragma ivdep
         for (int j = x_min; j <= x_max; j++)
         {

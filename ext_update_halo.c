@@ -52,7 +52,6 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         int *dpth,
         int* offload)
 {
-    printf("in %s\n", __func__);
     int halo_offload = *offload && _chunk.offload;
     int x_min=*xmin;
     int x_max=*xmax;
@@ -88,7 +87,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for
+//#pragma omp parallel for
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
 #pragma ivdep
@@ -104,7 +103,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_TOP,1)]==EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for
+//#pragma omp parallel for
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
 #pragma ivdep
@@ -120,7 +119,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for
+//#pragma omp parallel for
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
 #pragma ivdep
@@ -136,7 +135,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for
+//#pragma omp parallel for
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
 #pragma ivdep
@@ -155,7 +154,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for
+//#pragma omp parallel for
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
 #pragma ivdep
@@ -171,7 +170,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for
+//#pragma omp parallel for
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
 #pragma ivdep
@@ -187,7 +186,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for
+//#pragma omp parallel for
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
 #pragma ivdep
@@ -203,7 +202,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for
+//#pragma omp parallel for
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
 #pragma ivdep
@@ -222,7 +221,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for
+//#pragma omp parallel for
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
 #pragma ivdep
@@ -238,7 +237,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
 #pragma ivdep
@@ -254,7 +253,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
 #pragma ivdep
@@ -270,7 +269,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
 #pragma ivdep
@@ -289,7 +288,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
 #pragma ivdep
@@ -305,7 +304,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for
+//#pragma omp parallel for
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
 #pragma ivdep
@@ -321,7 +320,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for
+//#pragma omp parallel for
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
 #pragma ivdep
@@ -337,7 +336,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for
+//#pragma omp parallel for
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
 #pragma ivdep
@@ -356,7 +355,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
 #pragma ivdep
@@ -372,7 +371,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
 #pragma ivdep
@@ -388,7 +387,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
 #pragma ivdep
@@ -404,7 +403,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
 #pragma ivdep
@@ -423,7 +422,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
 #pragma ivdep
@@ -439,7 +438,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
 #pragma ivdep
@@ -455,7 +454,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
 #pragma ivdep
@@ -471,7 +470,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
 #pragma ivdep
@@ -490,7 +489,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
 #pragma ivdep
@@ -506,7 +505,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
 #pragma ivdep
@@ -522,7 +521,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
 #pragma ivdep
@@ -538,7 +537,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
 #pragma ivdep
@@ -556,7 +555,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+1+depth; j++) 
             {
 #pragma ivdep
@@ -572,7 +571,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+1+depth; j++) 
             {
 #pragma ivdep
@@ -588,7 +587,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+1+depth; k++) 
             {
 #pragma ivdep
@@ -604,7 +603,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+1+depth; k++) 
             {
 #pragma ivdep
@@ -623,7 +622,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+1+depth; j++) 
             {
 #pragma ivdep
@@ -639,7 +638,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+1+depth; j++) 
             {
 #pragma ivdep
@@ -655,7 +654,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+1+depth; k++) 
             {
 #pragma ivdep
@@ -671,7 +670,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+1+depth; k++) 
             {
 #pragma ivdep
@@ -690,7 +689,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+1+depth; j++) 
             {
 #pragma ivdep
@@ -706,7 +705,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+1+depth; j++) 
             {
 #pragma ivdep
@@ -722,7 +721,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+1+depth; k++) 
             {
 #pragma ivdep
@@ -738,7 +737,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+1+depth; k++) 
             {
 #pragma ivdep
@@ -757,7 +756,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+1+depth; j++) 
             {
 #pragma ivdep
@@ -773,7 +772,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+1+depth; j++) 
             {
 #pragma ivdep
@@ -789,7 +788,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+1+depth; k++) 
             {
 #pragma ivdep
@@ -805,7 +804,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+1+depth; k++) 
             {
 #pragma ivdep
@@ -824,7 +823,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+1+depth; j++) 
             {
 #pragma ivdep
@@ -840,7 +839,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+1+depth; j++) 
             {
 #pragma ivdep
@@ -856,7 +855,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
 #pragma ivdep
@@ -872,7 +871,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
 #pragma ivdep
@@ -891,7 +890,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+1+depth; j++) 
             {
 #pragma ivdep
@@ -907,7 +906,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+1+depth; j++) 
             {
 #pragma ivdep
@@ -923,7 +922,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
 #pragma ivdep
@@ -939,7 +938,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+depth; k++) 
             {
 #pragma ivdep
@@ -958,7 +957,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
 #pragma ivdep
@@ -974,7 +973,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
 #pragma ivdep
@@ -990,7 +989,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+1+depth; k++) 
             {
 #pragma ivdep
@@ -1006,7 +1005,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+1+depth; k++) 
             {
 #pragma ivdep
@@ -1025,7 +1024,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_BOTTOM,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
 #pragma ivdep
@@ -1041,7 +1040,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_TOP,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int j = x_min-depth; j <= x_max+depth; j++) 
             {
 #pragma ivdep
@@ -1057,7 +1056,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_LEFT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+1+depth; k++) 
             {
 #pragma ivdep
@@ -1073,7 +1072,7 @@ void update_halo_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 tile_neighbours[FTNREF1D(TILE_RIGHT,1)] == EXTERNAL_TILE) 
         {
 #pragma omp target teams distribute if(halo_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
             for (int k = y_min-depth; k <= y_max+1+depth; k++) 
             {
 #pragma ivdep

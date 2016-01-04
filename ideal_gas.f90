@@ -35,7 +35,6 @@ CONTAINS
 
     LOGICAl :: predict
 
-
     IF(use_fortran_kernels) THEN
       IF(.NOT.predict) THEN
         CALL ideal_gas_kernel(chunk%tiles(tile)%t_xmin,    &

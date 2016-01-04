@@ -56,12 +56,10 @@ void pdv_kernel_c_(int *prdct,
     double dt=*dtbyt;
     int offload = _chunk.offload;
 
-    printf("in %s\n", __func__);
-
     if(predict == 0) 
     {
 #pragma omp target teams distribute if(offload)
-#pragma omp parallel for
+//#pragma omp parallel for
         for (int k = y_min; k <= y_max; k++) 
         {
 #pragma ivdep
@@ -128,7 +126,7 @@ void pdv_kernel_c_(int *prdct,
     else
     {
 #pragma omp target teams distribute if(offload)
-#pragma omp parallel for
+//#pragma omp parallel for
         for (int k = y_min; k <= y_max; k++) 
         {
 #pragma ivdep

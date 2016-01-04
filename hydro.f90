@@ -52,20 +52,24 @@ SUBROUTINE hydro
         chunk%tiles(1)%field%work_array6, &
         chunk%tiles(1)%field%work_array7, &
         chunk%tiles(1)%field%cellx, &
+        chunk%tiles(1)%field%celly, &
         chunk%tiles(1)%field%vertexx, &
+        chunk%tiles(1)%field%vertexy, &
         chunk%tiles(1)%field%celldx, &
+        chunk%tiles(1)%field%celldy, &
         chunk%tiles(1)%field%vertexdx, &
+        chunk%tiles(1)%field%vertexdy, &
         chunk%tiles(1)%field%volume, &
         chunk%tiles(1)%field%xarea, &
         chunk%tiles(1)%field%yarea)
 END SUBROUTINE hydro
 
-SUBROUTINE hydro_step(xmin, ymin, xmax, ymax, density0, density1, &
+SUBROUTINE hydro_step(xmin, xmax, ymin, ymax, density0, density1, &
     energy0, energy1, pressure, visc, soundspeed, xvel0, xvel1, yvel0, &
     yvel1, vol_flux_x, mass_flux_x, vol_flux_y, mass_flux_y, &
     work_array1, work_array2, work_array3, work_array4, work_array5, &
-    work_array6, work_array7, cellx, vertexx, celldx, vertexdx, &
-    volume, xarea, yarea)
+    work_array6, work_array7, cellx, celly, vertexx, vertexy, celldx, &
+    celldy, vertexdx, vertexdy, volume, xarea, yarea)
 
     USE clover_module
     USE timestep_module
@@ -115,16 +119,14 @@ SUBROUTINE hydro_step(xmin, ymin, xmax, ymax, density0, density1, &
 
     timerstart = timer()
 
-    WRITE(0,*) "IN HYDRO"
-
-    !$OMP TARGET DATA IF(g_offload.EQ.1)&
-    !$OMP MAP(to: density0, density1, energy0, energy1, pressure) &
-    !$OMP MAP(to: soundspeed, xvel0, xvel1, yvel0, yvel1, vol_flux_x) &
-    !$OMP MAP(to: mass_flux_x, vol_flux_y, mass_flux_y, work_array1) &
-    !$OMP MAP(to: work_array2, work_array3, work_array4, work_array5) &
-    !$OMP MAP(to: work_array6, work_array7, cellx, celly, vertexx) &
-    !$OMP MAP(to: vertexy, celldx, celldy, vertexdx, vertexdy, xarea) &
-    !$OMP MAP(to: yarea, volume)
+    !$OMP TARGET DATA IF(g_offload)&
+    !$OMP MAP(tofrom: density0, density1, energy0, energy1, pressure, visc) &
+    !$OMP MAP(tofrom: soundspeed, xvel0, xvel1, yvel0, yvel1, vol_flux_x) &
+    !$OMP MAP(tofrom: mass_flux_x, vol_flux_y, mass_flux_y, work_array1) &
+    !$OMP MAP(tofrom: work_array2, work_array3, work_array4, work_array5) &
+    !$OMP MAP(tofrom: work_array6, work_array7, cellx, celly, vertexx) &
+    !$OMP MAP(tofrom: vertexy, celldx, celldy, vertexdx, vertexdy, xarea) &
+    !$OMP MAP(tofrom: yarea, volume)
 
     DO
 

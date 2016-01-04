@@ -49,7 +49,7 @@ void accelerate_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     int offload = _chunk.offload;
 
 #pragma omp target teams distribute if(offload) 
-#pragma omp parallel for
+//#pragma omp parallel for
     for (int k = y_min; k <= y_max + 1; k++) 
     {
 #pragma ivdep

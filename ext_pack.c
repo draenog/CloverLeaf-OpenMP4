@@ -73,7 +73,7 @@ void clover_pack_message_left_c_(int *xmin,int *xmax,int *ymin,int *ymax, double
     }
 
 #pragma omp target teams distribute if(pack_offload)
-#pragma omp parallel for
+//#pragma omp parallel for
     for (int k = y_min-depth; k <= y_max+y_inc+depth; k++) 
     {
 #pragma ivdep
@@ -132,7 +132,7 @@ void clover_unpack_message_left_c_(int *xmin,int *xmax,int *ymin,int *ymax, doub
     }
 
 #pragma omp target teams distribute if(pack_offload)
-#pragma omp parallel for
+//#pragma omp parallel for
     for (int k = y_min-depth; k <= y_max+y_inc+depth; k++) 
     {
 #pragma ivdep
@@ -190,7 +190,7 @@ void clover_pack_message_right_c_(int *xmin,int *xmax,int *ymin,int *ymax, doubl
     }
 
 #pragma omp target teams distribute if(pack_offload)
-#pragma omp parallel for
+//#pragma omp parallel for
     for (int k = y_min-depth; k <= y_max+y_inc+depth; k++) 
     {
 #pragma ivdep
@@ -248,7 +248,7 @@ void clover_unpack_message_right_c_(int *xmin,int *xmax,int *ymin,int *ymax, dou
     }
 
 #pragma omp target teams distribute if(pack_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
     for (int k = y_min-depth; k <= y_max+y_inc+depth; k++) 
     {
 #pragma ivdep
@@ -308,7 +308,7 @@ void clover_pack_message_top_c_(int *xmin,int *xmax,int *ymin,int *ymax, double 
     for (int k = 1; k <= depth; k++) 
     {
 #pragma omp target teams distribute if(pack_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
         for (int j = x_min-depth; j <= x_max+x_inc+depth; j++) 
         {
             int index = buffer_offset+k+(j+depth-1)*depth;
@@ -365,7 +365,7 @@ void clover_pack_message_bottom_c_(int *xmin,int *xmax,int *ymin,int *ymax, doub
     for (int k = 1; k <= depth; k++) 
     {
 #pragma omp target teams distribute if(pack_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
         for (int j = x_min-depth; j <= x_max+x_inc+depth; j++) 
         {
             int index = buffer_offset+k+(j+depth-1)*depth;
@@ -422,7 +422,7 @@ void clover_unpack_message_bottom_c_(int *xmin,int *xmax,int *ymin,int *ymax, do
     for (int k = 1; k <= depth; k++) 
     {
 #pragma omp target teams distribute if(pack_offload)
-#pragma omp parallel for
+//#pragma omp parallel for
         for (int j = x_min-depth; j <= x_max+x_inc+depth; j++) 
         {
             int index = buffer_offset+k+(j+depth-1)*depth;
@@ -480,7 +480,7 @@ void clover_unpack_message_top_c_(int *xmin,int *xmax,int *ymin,int *ymax, doubl
     for (int k = 1; k <= depth; k++) 
     {
 #pragma omp target teams distribute if(pack_offload)
-#pragma omp parallel for 
+//#pragma omp parallel for 
         for (int j = x_min-depth; j <= x_max+x_inc+depth; j++) 
         {
             int index = buffer_offset + k+(j+depth-1)*depth;
