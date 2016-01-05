@@ -62,7 +62,7 @@ COMPILER	= CRAY
 MODE	 	= offload
 MPI_F90		= ftn
 MPI_C		= cc
-CPROFILER   = no
+CPROFILER   = yes
 
 ifeq ($(MODE), native)
    MIC = -mmic
@@ -132,7 +132,7 @@ ifdef IEEE
 endif
 
 FLAGS=$(FLAGS_$(COMPILER)) $(OMP) $(I3E) $(OPTIONS) $(MIC)
-CFLAGS=$(CFLAGS_$(COMPILER)) $(OMP) $(I3E) $(C_OPTIONS) $(MIC) -c
+CFLAGS=$(CFLAGS_$(COMPILER)) $(OMP) $(I3E) $(OPTIONS) $(MIC) -c
 
 OBJ	= $(patsubst %.c,%.o, $(wildcard *.c))
 OBJ	+= $(patsubst %.f90,%.o, $(wildcard *.f90))

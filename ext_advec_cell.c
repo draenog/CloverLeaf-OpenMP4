@@ -58,15 +58,18 @@ void advec_cell_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     double one_by_six=1.0/6.0;
     int offload = _chunk.offload;
 
+    START_PROFILING;
+
     if(dir == g_xdir)
     {
         if(sweep_number == 1)
         {
-#pragma omp target teams distribute if(offload)
+#pragma omp target teams distribute \
+          collapse(2) if(offload)
 //#pragma omp parallel for 
             for (int k = y_min-2; k <= y_max+2; k++)
             {
-#pragma ivdep
+//#pragma ivdep
                 for (int j = x_min-2; j <= x_max+2; j++)
                 {
                     pre_vol[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)] =
@@ -86,11 +89,12 @@ void advec_cell_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         }
         else 
         {
-#pragma omp target teams distribute if(offload)
+#pragma omp target teams distribute \
+            collapse(2) if(offload)
 //#pragma omp parallel for
             for (int k = y_min-2; k <= y_max+2; k++) 
             {
-#pragma ivdep
+//#pragma ivdep
                 for (int j = x_min-2; j <= x_max+2; j++) 
                 {
                     pre_vol[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)] =
@@ -102,7 +106,8 @@ void advec_cell_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 }
             }
         }
-#pragma omp target teams distribute if(offload)
+#pragma omp target teams distribute \
+        collapse(2) if(offload)
 //#pragma omp parallel for 
         for (int k = y_min; k <= y_max; k++)
         {
@@ -154,11 +159,12 @@ void advec_cell_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
             }
         }
 
-#pragma omp target teams distribute if(offload)
+#pragma omp target teams distribute \
+        collapse(2) if(offload)
 //#pragma omp parallel for
         for (int k = y_min; k <= y_max; k++)
         {
-#pragma ivdep
+//#pragma ivdep
             for (int j = x_min; j <= x_max; j++)
             {
                 double pre_mass_s =
@@ -185,11 +191,12 @@ void advec_cell_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     {
         if(sweep_number == 1)
         {
-#pragma omp target teams distribute if(offload)
+#pragma omp target teams distribute \
+            collapse(2) if(offload)
 //#pragma omp parallel for
             for (int k = y_min-2; k <= y_max+2; k++)
             {
-#pragma ivdep
+//#pragma ivdep
                 for (int j = x_min-2; j <= x_max+2; j++)
                 {
                     pre_vol[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)] =
@@ -207,11 +214,12 @@ void advec_cell_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         }
         else 
         {
-#pragma omp target teams distribute if(offload)
+#pragma omp target teams distribute \
+            collapse(2) if(offload)
 //#pragma omp parallel for 
             for (int k = y_min-2; k <= y_max+2; k++)
             {
-#pragma ivdep
+//#pragma ivdep
                 for (int j = x_min-2; j <= x_max+2; j++)
                 {
                     pre_vol[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)] =
@@ -224,7 +232,8 @@ void advec_cell_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
             }
         }
 
-#pragma omp target teams distribute if(offload)
+#pragma omp target teams distribute \
+        collapse(2) if(offload)
 //#pragma omp parallel for
         for (int k = y_min; k <= y_max+2; k++)
         {
@@ -276,11 +285,12 @@ void advec_cell_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
             }
         }
 
-#pragma omp target teams distribute if(offload)
+#pragma omp target teams distribute \
+        collapse(2) if(offload)
 //#pragma omp parallel for
         for (int k = y_min; k <= y_max; k++)
         {
-#pragma ivdep
+//#pragma ivdep
             for (int j = x_min; j <= x_max; j++)
             {
                 double pre_mass_s =
@@ -303,5 +313,7 @@ void advec_cell_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
             }
         }
     }
+
+    STOP_PROFILING(__func__);
 }
 

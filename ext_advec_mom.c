@@ -68,13 +68,16 @@ void advec_mom_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
 
     mom_sweep=direction+2*(sweep_number-1);
 
+    START_PROFILING;
+
     if(mom_sweep==1)
     {
-#pragma omp target teams distribute if(offload)
+#pragma omp target teams distribute \
+        collapse(2) if(offload)
 //#pragma omp parallel for
         for (int k = y_min-2; k <= y_max+2; k++)
         {
-#pragma ivdep
+//#pragma ivdep
             for (int j = x_min-2; j <= x_max+2; j++)
             {
                 post_vol[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)] =
@@ -90,11 +93,12 @@ void advec_mom_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     } 
     else if(mom_sweep==2)
     {
-#pragma omp target teams distribute if(offload)
+#pragma omp target teams distribute \
+        collapse(2) if(offload)
 //#pragma omp parallel for
         for (int k = y_min-2; k <= y_max+2; k++)
         {
-#pragma ivdep
+//#pragma ivdep
             for (int j = x_min-2; j <= x_max+2; j++)
             {
                 post_vol[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)] =
@@ -110,11 +114,12 @@ void advec_mom_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     } 
     else if(mom_sweep==3)
     {
-#pragma omp target teams distribute if(offload)
+#pragma omp target teams distribute \
+        collapse(2) if(offload)
 //#pragma omp parallel for 
         for (int k = y_min-2; k <= y_max+2; k++)
         {
-#pragma ivdep
+//#pragma ivdep
             for (int j = x_min-2; j <= x_max+2; j++)
             {
                 post_vol[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)] =
@@ -128,11 +133,12 @@ void advec_mom_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     } 
     else if(mom_sweep==4)
     {
-#pragma omp target teams distribute if(offload)
+#pragma omp target teams distribute \
+        collapse(2) if(offload)
 //#pragma omp parallel for 
         for (int k = y_min-2; k <= y_max+2; k++)
         {
-#pragma ivdep
+//#pragma ivdep
             for (int j = x_min-2; j <= x_max+2; j++)
             {
                 post_vol[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)] =
@@ -149,11 +155,12 @@ void advec_mom_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     {
         if(which_vel == 1)
         {
-#pragma omp target teams distribute if(offload)
+#pragma omp target teams distribute \
+            collapse(2) if(offload)
 //#pragma omp parallel for 
             for (int k = y_min; k <= y_max+1; k++) 
             {
-#pragma ivdep
+//#pragma ivdep
                 for (int j = x_min-2; j <= x_max+2; j++) 
                 {
                     node_flux[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)]=0.25
@@ -163,11 +170,14 @@ void advec_mom_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                                 +mass_flux_x[FTNREF2D(j+1,k  ,x_max+5,x_min-2,y_min-2)]);
                 }
             }
-#pragma omp target teams distribute if(offload)
+#pragma omp target teams distribute \
+            collapse(2) if(offload)
 //#pragma omp parallel for 
-            for (int k=y_min;k<=y_max+1;k++) {
-#pragma ivdep
-                for (int j=x_min-1;j<=x_max+2;j++) {
+            for (int k=y_min;k<=y_max+1;k++) 
+            {
+//#pragma ivdep
+                for (int j=x_min-1;j<=x_max+2;j++) 
+                {
                     node_mass_post[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)]=0.25
                         *(density1[FTNREF2D(j  ,k-1,x_max+4,x_min-2,y_min-2)]
                                 *post_vol[FTNREF2D(j  ,k-1,x_max+5,x_min-2,y_min-2)]
@@ -186,7 +196,8 @@ void advec_mom_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
             }
         }
 
-#pragma omp target teams distribute if(offload)
+#pragma omp target teams distribute \
+        collapse(2) if(offload)
 //#pragma omp parallel for 
         for (int k = y_min; k <= y_max+1; k++)
         {
@@ -223,11 +234,12 @@ void advec_mom_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                     node_flux[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)];
             }
         }
-#pragma omp target teams distribute if(offload)
+#pragma omp target teams distribute \
+        collapse(2) if(offload)
 //#pragma omp parallel for 
         for (int k=y_min;k<=y_max+1;k++) 
         {
-#pragma ivdep
+//#pragma ivdep
             for (int j=x_min;j<=x_max+1;j++) 
             {
                 vel1[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)] =
@@ -243,11 +255,12 @@ void advec_mom_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     {
         if(which_vel == 1)
         {
-#pragma omp target teams distribute if(offload)
+#pragma omp target teams distribute \
+            collapse(2) if(offload)
 //#pragma omp parallel for 
             for (int k=y_min-2;k<=y_max+2;k++) 
             {
-#pragma ivdep
+//#pragma ivdep
                 for (int j=x_min;j<=x_max+1;j++) 
                 {
                     node_flux[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)] = 0.25 *
@@ -257,10 +270,11 @@ void advec_mom_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                          mass_flux_y[FTNREF2D(j  ,k+1,x_max+4,x_min-2,y_min-2)]);
                 }
             }
-#pragma omp target teams distribute if(offload)
+#pragma omp target teams distribute \
+            collapse(2) if(offload)
 //#pragma omp parallel for 
             for (int k=y_min-1;k<=y_max+2;k++) {
-#pragma ivdep
+//#pragma ivdep
                 for (int j=x_min;j<=x_max+1;j++) {
                     node_mass_post[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)]=0.25
                         *(density1[FTNREF2D(j  ,k-1,x_max+4,x_min-2,y_min-2)]
@@ -280,7 +294,8 @@ void advec_mom_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
             }
         }
 
-#pragma omp target teams distribute if(offload)
+#pragma omp target teams distribute \
+        collapse(2) if(offload)
 //#pragma omp parallel for
         for (int k=y_min-1;k<=y_max+1;k++) 
         {
@@ -322,11 +337,12 @@ void advec_mom_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                     node_flux[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)];
             }
         }
-#pragma omp target teams distribute if(offload)
+#pragma omp target teams distribute \
+        collapse(2) if(offload)
 //#pragma omp parallel for 
         for (int k=y_min;k<=y_max+1;k++) 
         {
-#pragma ivdep
+//#pragma ivdep
             for (int j=x_min;j<=x_max+1;j++) 
             {
                 vel1[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)] =
@@ -338,4 +354,6 @@ void advec_mom_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
             }
         }
     }
+
+    STOP_PROFILING(__func__);
 }

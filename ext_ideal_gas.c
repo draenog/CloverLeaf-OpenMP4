@@ -41,7 +41,10 @@ void ideal_gas_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     int y_max=*ymax;
     int ideal_offload = *offload && _chunk.offload;
 
-#pragma omp target teams distribute if(ideal_offload)
+    START_PROFILING;
+
+#pragma omp target teams distribute \
+    collapse(2) if(ideal_offload)
 //#pragma omp parallel for
     for (int k = y_min; k <= y_max; k++) 
     {
@@ -63,5 +66,5 @@ void ideal_gas_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         }
     }
 
-    printf("out %s offload: %d\n", __func__, ideal_offload);
+    STOP_PROFILING(__func__);
 }

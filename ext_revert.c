@@ -42,11 +42,14 @@ void revert_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     int y_max=*ymax;
     int offload = _chunk.offload;
 
-#pragma omp target teams distribute if(offload)
+    START_PROFILING;
+
+#pragma omp target teams distribute \
+    collapse(2) if(offload)
 //#pragma omp parallel for
     for (int k = y_min; k <= y_max; k++) 
     {
-#pragma ivdep
+//#pragma ivdep
         for (int j = x_min; j <= x_max; j++) 
         {
             density1[FTNREF2D(j  ,k  ,x_max+4,x_min-2,y_min-2)] =
@@ -54,15 +57,18 @@ void revert_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         }
     }
 
-#pragma omp target teams distribute if(offload)
+#pragma omp target teams distribute \
+    collapse(2) if(offload)
 //#pragma omp parallel for 
     for (int k = y_min; k <= y_max; k++) 
     {
-#pragma ivdep
+//#pragma ivdep
         for (int j = x_min; j <= x_max; j++) 
         {
             energy1[FTNREF2D(j  ,k  ,x_max+4,x_min-2,y_min-2)] =
                 energy0[FTNREF2D(j  ,k  ,x_max+4,x_min-2,y_min-2)];
         }
     }
+
+    STOP_PROFILING(__func__);
 }

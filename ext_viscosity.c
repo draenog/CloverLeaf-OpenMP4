@@ -44,11 +44,14 @@ void viscosity_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     int y_max=*ymax;
     int offload = _chunk.offload;
 
-#pragma omp target teams distribute if(offload)
+    START_PROFILING;
+
+#pragma omp target teams distribute \
+    collapse(2) if(offload)
 //#pragma omp parallel for
     for (int k = y_min; k <= y_max; k++) 
     {
-#pragma ivdep
+//#pragma ivdep
         for (int j = x_min; j <= x_max; j++) 
         {
 
@@ -119,5 +122,7 @@ void viscosity_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
             }
         }
     }
+
+    STOP_PROFILING(__func__);
 }
 

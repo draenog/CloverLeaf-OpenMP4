@@ -115,7 +115,6 @@ SUBROUTINE field_summary(offload)
   mass=t_mass
   press=t_press
 
-
   ! For mpi I need a reduction here
   CALL clover_sum(vol)
   CALL clover_sum(mass)
@@ -154,6 +153,5 @@ SUBROUTINE field_summary(offload)
     !$    ENDIF
     ENDIF
   ENDIF
-
 
 END SUBROUTINE field_summary

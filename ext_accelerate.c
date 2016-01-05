@@ -48,11 +48,14 @@ void accelerate_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     double dt = *dbyt;
     int offload = _chunk.offload;
 
-#pragma omp target teams distribute if(offload) 
+    START_PROFILING;
+
+#pragma omp target teams distribute \
+    if(offload) collapse(2)
 //#pragma omp parallel for
     for (int k = y_min; k <= y_max + 1; k++) 
     {
-#pragma ivdep
+//#pragma ivdep
         for (int j = x_min;j <= x_max + 1; j++)
         {
             double nodal_mass=(
@@ -104,4 +107,6 @@ void accelerate_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                          viscosity[FTNREF2D(j-1,k-1,x_max+4,x_min-2,y_min-2)]));
         }
     }
+
+    STOP_PROFILING(__func__);
 }

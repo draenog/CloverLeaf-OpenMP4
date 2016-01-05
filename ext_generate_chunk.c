@@ -27,8 +27,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "ftocmacros.h"
 #include <math.h>
+#include "ftocmacros.h"
+#include "ext_chunk.h"
 
 void generate_chunk_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         double *vertexx,
@@ -62,6 +63,8 @@ void generate_chunk_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     int g_rect=*g_rct;
     int g_circ=*g_crc;
     int g_point=*g_pnt;
+
+    START_PROFILING;
 
     /* State 1 is always the background state */
 #pragma omp parallel for
@@ -198,4 +201,6 @@ void generate_chunk_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
             }
         }
     }
+
+    STOP_PROFILING(__func__);
 }

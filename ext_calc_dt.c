@@ -82,13 +82,15 @@ void calc_dt_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     double dt_min_val = g_big;
     double jk_control=1.1;
 
-#pragma omp target teams distribute \
-    if(offload) reduction(min: dt_min_val)
+    START_PROFILING;
+
+#pragma omp target teams distribute if(offload) \
+    reduction(min: dt_min_val) collapse(2)
 //#pragma omp parallel for
     for (int k = y_min; k <= y_max; k++)
     {
-#pragma omp simd
-#pragma ivdep
+//#pragma omp simd
+//#pragma ivdep
         for (int j = x_min; j <= x_max; j++)
         {
             double dsx = celldx[FTNREF1D(j,x_min-2)];
@@ -137,6 +139,8 @@ void calc_dt_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
             dt_min_val = MIN(dt_min_val, MIN(dtct, MIN(dtut, MIN(dtvt, dtdivt))));
         }
     }
+
+    STOP_PROFILING(__func__);
 
     // Extract the mimimum timestep information
     dtl_control = 10.01*(jk_control-(int)(jk_control));

@@ -58,12 +58,14 @@ void field_summary_kernel_c_(int *xmin,
 
     int field_offload = _chunk.offload && *offload;
 
+    START_PROFILING;
+
 #pragma omp target teams distribute if(field_offload) \
-    reduction(+ : vol, mass, press, ie, ke)
+    collapse(2) reduction(+ : vol, mass, press, ie, ke)
 //#pragma omp parallel for
     for (int k = y_min; k <= y_max; k++) 
     {
-#pragma ivdep
+//#pragma ivdep
         for (int j = x_min;j <= x_max; j++) 
         {
             double vsqrd=0.0;
@@ -94,4 +96,6 @@ void field_summary_kernel_c_(int *xmin,
     *ien=ie;
     *ken=ke;
     *prss=press;
+
+    STOP_PROFILING(__func__);
 }

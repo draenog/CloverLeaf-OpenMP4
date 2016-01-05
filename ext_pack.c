@@ -72,11 +72,14 @@ void clover_pack_message_left_c_(int *xmin,int *xmax,int *ymin,int *ymax, double
         y_inc=1;
     }
 
-#pragma omp target teams distribute if(pack_offload)
+    START_PROFILING;
+
+#pragma omp target teams distribute \
+    collapse(2) if(pack_offload)
 //#pragma omp parallel for
     for (int k = y_min-depth; k <= y_max+y_inc+depth; k++) 
     {
-#pragma ivdep
+//#pragma ivdep
         for (int j = 1; j <= depth; j++) 
         {
             int index=buffer_offset+j+(k+depth-1)*depth;
@@ -84,6 +87,8 @@ void clover_pack_message_left_c_(int *xmin,int *xmax,int *ymin,int *ymax, double
                 field[FTNREF2D(x_min+x_inc-1+j,k,x_max+4+x_inc,x_min-2,y_min-2)];
         }
     }
+
+    STOP_PROFILING(__func__);
 }
 
 void clover_unpack_message_left_c_(int *xmin,int *xmax,int *ymin,int *ymax, double *field,
@@ -131,11 +136,14 @@ void clover_unpack_message_left_c_(int *xmin,int *xmax,int *ymin,int *ymax, doub
         y_inc=1;
     }
 
-#pragma omp target teams distribute if(pack_offload)
+    START_PROFILING;
+
+#pragma omp target teams distribute \
+    collapse(2) if(pack_offload)
 //#pragma omp parallel for
     for (int k = y_min-depth; k <= y_max+y_inc+depth; k++) 
     {
-#pragma ivdep
+//#pragma ivdep
         for (int j = 1; j <= depth; j++) 
         {
             int index = buffer_offset+j+(k+depth-1)*depth;
@@ -143,6 +151,8 @@ void clover_unpack_message_left_c_(int *xmin,int *xmax,int *ymin,int *ymax, doub
                 left_rcv_buffer[FTNREF1D(index,1)];
         }
     }
+
+    STOP_PROFILING(__func__);
 }
 
 void clover_pack_message_right_c_(int *xmin,int *xmax,int *ymin,int *ymax, double *field,
@@ -189,11 +199,14 @@ void clover_pack_message_right_c_(int *xmin,int *xmax,int *ymin,int *ymax, doubl
         y_inc=1;
     }
 
-#pragma omp target teams distribute if(pack_offload)
+    START_PROFILING;
+
+#pragma omp target teams distribute \
+    collapse(2) if(pack_offload)
 //#pragma omp parallel for
     for (int k = y_min-depth; k <= y_max+y_inc+depth; k++) 
     {
-#pragma ivdep
+//#pragma ivdep
         for (int j = 1; j <= depth; j++) 
         {
             int index = buffer_offset+j+(k+depth-1)*depth;
@@ -201,6 +214,8 @@ void clover_pack_message_right_c_(int *xmin,int *xmax,int *ymin,int *ymax, doubl
                 field[FTNREF2D(x_max+1-j,k,x_max+4+x_inc,x_min-2,y_min-2)];
         }
     }
+
+    STOP_PROFILING(__func__);
 }
 
 void clover_unpack_message_right_c_(int *xmin,int *xmax,int *ymin,int *ymax, double *field,
@@ -247,11 +262,14 @@ void clover_unpack_message_right_c_(int *xmin,int *xmax,int *ymin,int *ymax, dou
         y_inc=1;
     }
 
-#pragma omp target teams distribute if(pack_offload)
+    START_PROFILING;
+
+#pragma omp target teams distribute \
+    collapse(2) if(pack_offload)
 //#pragma omp parallel for 
     for (int k = y_min-depth; k <= y_max+y_inc+depth; k++) 
     {
-#pragma ivdep
+//#pragma ivdep
         for (int j = 1; j <= depth; j++) 
         {
             int index = buffer_offset+j+(k+depth-1)*depth;
@@ -259,6 +277,8 @@ void clover_unpack_message_right_c_(int *xmin,int *xmax,int *ymin,int *ymax, dou
                 right_rcv_buffer[FTNREF1D(index,1)];
         }
     }
+
+    STOP_PROFILING(__func__);
 }
 
 void clover_pack_message_top_c_(int *xmin,int *xmax,int *ymin,int *ymax, double *field,
@@ -305,9 +325,12 @@ void clover_pack_message_top_c_(int *xmin,int *xmax,int *ymin,int *ymax, double 
         y_inc=1;
     }
 
+    START_PROFILING;
+
+#pragma omp target teams distribute \
+        collapse(2) if(pack_offload)
     for (int k = 1; k <= depth; k++) 
     {
-#pragma omp target teams distribute if(pack_offload)
 //#pragma omp parallel for 
         for (int j = x_min-depth; j <= x_max+x_inc+depth; j++) 
         {
@@ -316,6 +339,8 @@ void clover_pack_message_top_c_(int *xmin,int *xmax,int *ymin,int *ymax, double 
                 field[FTNREF2D(j,y_max+1-k,x_max+4+x_inc,x_min-2,y_min-2)];
         }
     }
+
+    STOP_PROFILING(__func__);
 }
 
 void clover_pack_message_bottom_c_(int *xmin,int *xmax,int *ymin,int *ymax, double *field,
@@ -362,9 +387,12 @@ void clover_pack_message_bottom_c_(int *xmin,int *xmax,int *ymin,int *ymax, doub
         y_inc=1;
     }
 
+    START_PROFILING;
+
+#pragma omp target teams distribute \
+        collapse(2) if(pack_offload)
     for (int k = 1; k <= depth; k++) 
     {
-#pragma omp target teams distribute if(pack_offload)
 //#pragma omp parallel for 
         for (int j = x_min-depth; j <= x_max+x_inc+depth; j++) 
         {
@@ -373,6 +401,8 @@ void clover_pack_message_bottom_c_(int *xmin,int *xmax,int *ymin,int *ymax, doub
                 field[FTNREF2D(j,y_min+y_inc-1+k,x_max+4+x_inc,x_min-2,y_min-2)];
         }
     }
+
+    STOP_PROFILING(__func__);
 }
 
 void clover_unpack_message_bottom_c_(int *xmin,int *xmax,int *ymin,int *ymax, double *field,
@@ -419,9 +449,12 @@ void clover_unpack_message_bottom_c_(int *xmin,int *xmax,int *ymin,int *ymax, do
         y_inc=1;
     }
 
+    START_PROFILING;
+
+#pragma omp target teams distribute \
+        collapse(2) if(pack_offload)
     for (int k = 1; k <= depth; k++) 
     {
-#pragma omp target teams distribute if(pack_offload)
 //#pragma omp parallel for
         for (int j = x_min-depth; j <= x_max+x_inc+depth; j++) 
         {
@@ -430,6 +463,8 @@ void clover_unpack_message_bottom_c_(int *xmin,int *xmax,int *ymin,int *ymax, do
                 bottom_rcv_buffer[FTNREF1D(index,1)];
         }
     }
+
+    STOP_PROFILING(__func__);
 }
 
 void clover_unpack_message_top_c_(int *xmin,int *xmax,int *ymin,int *ymax, double *field,
@@ -477,9 +512,12 @@ void clover_unpack_message_top_c_(int *xmin,int *xmax,int *ymin,int *ymax, doubl
         y_inc=1;
     }
 
+    START_PROFILING;
+
+#pragma omp target teams distribute \
+        collapse(2) if(pack_offload)
     for (int k = 1; k <= depth; k++) 
     {
-#pragma omp target teams distribute if(pack_offload)
 //#pragma omp parallel for 
         for (int j = x_min-depth; j <= x_max+x_inc+depth; j++) 
         {
@@ -488,4 +526,6 @@ void clover_unpack_message_top_c_(int *xmin,int *xmax,int *ymin,int *ymax, doubl
                 top_rcv_buffer[FTNREF1D(index,1)];
         }
     }
+
+    STOP_PROFILING(__func__);
 }

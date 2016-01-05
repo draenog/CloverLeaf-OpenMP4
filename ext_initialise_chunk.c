@@ -23,8 +23,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "ftocmacros.h"
 #include <math.h>
+#include "ext_chunk.h"
+#include "ftocmacros.h"
 
 void initialise_chunk_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         double *minx,
@@ -51,6 +52,8 @@ void initialise_chunk_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     double min_y=*miny;
     double d_x=*dx;
     double d_y=*dy;
+
+    START_PROFILING;
 
 #pragma omp parallel for
 #pragma ivdep
@@ -142,4 +145,6 @@ void initialise_chunk_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 celldx[FTNREF1D(j,x_min-2)];
         }
     }
+
+    STOP_PROFILING(__func__);
 }
