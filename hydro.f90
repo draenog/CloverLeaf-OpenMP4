@@ -120,13 +120,13 @@ SUBROUTINE hydro_step(xmin, xmax, ymin, ymax, density0, density1, &
     timerstart = timer()
 
     !$OMP TARGET DATA IF(g_offload)&
-    !$OMP MAP(tofrom: density0, density1, energy0, energy1, pressure, visc) &
-    !$OMP MAP(tofrom: soundspeed, xvel0, xvel1, yvel0, yvel1, vol_flux_x) &
-    !$OMP MAP(tofrom: mass_flux_x, vol_flux_y, mass_flux_y, work_array1) &
-    !$OMP MAP(tofrom: work_array2, work_array3, work_array4, work_array5) &
-    !$OMP MAP(tofrom: work_array6, work_array7, cellx, celly, vertexx) &
-    !$OMP MAP(tofrom: vertexy, celldx, celldy, vertexdx, vertexdy, xarea) &
-    !$OMP MAP(tofrom: yarea, volume)
+    !$OMP MAP(to: density0, density1, energy0, energy1, pressure, visc) &
+    !$OMP MAP(to: soundspeed, xvel0, xvel1, yvel0, yvel1, vol_flux_x) &
+    !$OMP MAP(to: mass_flux_x, vol_flux_y, mass_flux_y, work_array1) &
+    !$OMP MAP(to: work_array2, work_array3, work_array4, work_array5) &
+    !$OMP MAP(to: work_array6, work_array7, cellx, celly, vertexx) &
+    !$OMP MAP(to: vertexy, celldx, celldy, vertexdx, vertexdy, xarea) &
+    !$OMP MAP(to: yarea, volume)
 
     DO
 

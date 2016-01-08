@@ -84,59 +84,74 @@ void calc_dt_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
 
     START_PROFILING;
 
-#pragma omp target teams distribute if(offload) \
-    reduction(min: dt_min_val) collapse(2)
-//#pragma omp parallel for
-    for (int k = y_min; k <= y_max; k++)
+    int min_vals_len = 3844*3844;
+    double* min_vals = (double*)malloc(sizeof(double)*min_vals_len);
+
+#pragma omp target data map(alloc: min_vals[:min_vals_len])
     {
-//#pragma omp simd
-//#pragma ivdep
-        for (int j = x_min; j <= x_max; j++)
+#pragma omp target teams distribute if(offload) collapse(2) \
+        //#pragma omp parallel for
+        for (int k = y_min; k <= y_max; k++)
         {
-            double dsx = celldx[FTNREF1D(j,x_min-2)];
-            double dsy = celldy[FTNREF1D(k,y_min-2)];
+            //#pragma omp simd
+            //#pragma ivdep
+            for (int j = x_min; j <= x_max; j++)
+            {
+                double dsx = celldx[FTNREF1D(j,x_min-2)];
+                double dsy = celldy[FTNREF1D(k,y_min-2)];
 
-            double cc = soundspeed[FTNREF2D(j,k,x_max+4,x_min-2,y_min-2)] *
-                soundspeed[FTNREF2D(j,k,x_max+4,x_min-2,y_min-2)] + 
-                (2.0*viscosity[FTNREF2D(j,k,x_max+4,x_min-2,y_min-2)] /
-                density0[FTNREF2D(j,k,x_max+4,x_min-2,y_min-2)]);
-            cc = MAX(sqrt(cc),g_small);
+                double cc = soundspeed[FTNREF2D(j,k,x_max+4,x_min-2,y_min-2)] *
+                    soundspeed[FTNREF2D(j,k,x_max+4,x_min-2,y_min-2)] + 
+                    (2.0*viscosity[FTNREF2D(j,k,x_max+4,x_min-2,y_min-2)] /
+                     density0[FTNREF2D(j,k,x_max+4,x_min-2,y_min-2)]);
+                cc = MAX(sqrt(cc),g_small);
 
-            double dtct = dtc_safe*MIN(dsx,dsy) / cc;
+                double dtct = dtc_safe*MIN(dsx,dsy) / cc;
 
-            double div=0.0;
+                double div=0.0;
 
-            double dv1 = (xvel0[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)] +
-                    xvel0[FTNREF2D(j  ,k+1,x_max+5,x_min-2,y_min-2)]) *
-                xarea[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)];
-            double dv2 = (xvel0[FTNREF2D(j+1,k  ,x_max+5,x_min-2,y_min-2)] +
-                    xvel0[FTNREF2D(j+1,k+1,x_max+5,x_min-2,y_min-2)]) *
-                xarea[FTNREF2D(j+1,k  ,x_max+5,x_min-2,y_min-2)];
+                double dv1 = (xvel0[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)] +
+                        xvel0[FTNREF2D(j  ,k+1,x_max+5,x_min-2,y_min-2)]) *
+                    xarea[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)];
+                double dv2 = (xvel0[FTNREF2D(j+1,k  ,x_max+5,x_min-2,y_min-2)] +
+                        xvel0[FTNREF2D(j+1,k+1,x_max+5,x_min-2,y_min-2)]) *
+                    xarea[FTNREF2D(j+1,k  ,x_max+5,x_min-2,y_min-2)];
 
-            div = div+dv2-dv1;
+                div = div+dv2-dv1;
 
-            double dtut = dtu_safe*2.0*volume[FTNREF2D(j,k,x_max+4,x_min-2,y_min-2)] /
-                MAX(fabs(dv1),MAX(fabs(dv2),g_small *
-                            volume[FTNREF2D(j,k,x_max+4,x_min-2,y_min-2)]));
+                double dtut = dtu_safe*2.0*volume[FTNREF2D(j,k,x_max+4,x_min-2,y_min-2)] /
+                    MAX(fabs(dv1),MAX(fabs(dv2),g_small *
+                                volume[FTNREF2D(j,k,x_max+4,x_min-2,y_min-2)]));
 
-            dv1 = (yvel0[FTNREF2D(j,k,x_max+5,x_min-2,y_min-2)] +
-                    yvel0[FTNREF2D(j+1,k,x_max+5,x_min-2,y_min-2)]) *
-                yarea[FTNREF2D(j,k,x_max+4,x_min-2,y_min-2)];
-            dv2 = (yvel0[FTNREF2D(j,k+1,x_max+5,x_min-2,y_min-2)] +
-                    yvel0[FTNREF2D(j+1,k+1,x_max+5,x_min-2,y_min-2)]) *
-                yarea[FTNREF2D(j,k+1,x_max+4,x_min-2,y_min-2)];
+                dv1 = (yvel0[FTNREF2D(j,k,x_max+5,x_min-2,y_min-2)] +
+                        yvel0[FTNREF2D(j+1,k,x_max+5,x_min-2,y_min-2)]) *
+                    yarea[FTNREF2D(j,k,x_max+4,x_min-2,y_min-2)];
+                dv2 = (yvel0[FTNREF2D(j,k+1,x_max+5,x_min-2,y_min-2)] +
+                        yvel0[FTNREF2D(j+1,k+1,x_max+5,x_min-2,y_min-2)]) *
+                    yarea[FTNREF2D(j,k+1,x_max+4,x_min-2,y_min-2)];
 
-            div=div+dv2-dv1;
+                div=div+dv2-dv1;
 
-            double dtvt = dtv_safe*2.0*volume[FTNREF2D(j,k,x_max+4,x_min-2,y_min-2)] /
-                MAX(fabs(dv1),MAX(fabs(dv2),g_small *
-                            volume[FTNREF2D(j,k,x_max+4,x_min-2,y_min-2)]));
+                double dtvt = dtv_safe*2.0*volume[FTNREF2D(j,k,x_max+4,x_min-2,y_min-2)] /
+                    MAX(fabs(dv1),MAX(fabs(dv2),g_small *
+                                volume[FTNREF2D(j,k,x_max+4,x_min-2,y_min-2)]));
 
-            div = div / (2.0*volume[FTNREF2D(j,k,x_max+4,x_min-2,y_min-2)]);
+                div = div / (2.0*volume[FTNREF2D(j,k,x_max+4,x_min-2,y_min-2)]);
 
-            double dtdivt = (div < -g_small) ? dtdiv_safe*(-1.0/div) : g_big;
+                double dtdivt = (div < -g_small) ? dtdiv_safe*(-1.0/div) : g_big;
 
-            dt_min_val = MIN(dt_min_val, MIN(dtct, MIN(dtut, MIN(dtvt, dtdivt))));
+                min_vals[FTNREF2D(j,k,3844,0,0)] = 
+                    MIN(dt_min_val, MIN(dtct, MIN(dtut, MIN(dtvt, dtdivt))));
+            }
+        }
+
+#pragma omp target teams distribute reduction(min: dt_min_val)
+        for (int k = y_min; k <= y_max; k++)
+        {
+            for (int j = x_min; j <= x_max; j++)
+            {
+                dt_min_val = MIN(dt_min_val, min_vals[FTNREF2D(j,k,3844,0,0)]);
+            }
         }
     }
 
