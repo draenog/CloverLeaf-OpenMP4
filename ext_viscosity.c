@@ -46,8 +46,7 @@ void viscosity_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
 
     START_PROFILING;
 
-#pragma omp target teams distribute \
-    collapse(2) if(offload)
+#pragma omp target teams distribute if(offload)
 //#pragma omp parallel for
     for (int k = y_min; k <= y_max; k++) 
     {

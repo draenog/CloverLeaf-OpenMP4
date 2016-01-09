@@ -60,15 +60,16 @@ SUBROUTINE start
       
   chunk%task = parallel%task
 
-  IF (use_c_kernels) THEN
-      CALL ext_init(g_offload)
-  ENDIF
-
   !chunk_task_responsible_for = parallel%task+1
 
   x_cells = right -left  +1
   y_cells = top   -bottom+1
-      
+
+  IF (use_c_kernels) THEN
+      CALL ext_init(x_cells, y_cells, g_offload)
+  ENDIF
+
+     
   chunk%left    = left
   chunk%bottom  = bottom
   chunk%right   = right

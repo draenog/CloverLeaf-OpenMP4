@@ -6,6 +6,8 @@
 
 typedef struct
 {
+    int xmax;
+    int ymax;
     int offload;
 } CloverChunk;
 

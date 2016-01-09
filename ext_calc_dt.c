@@ -84,12 +84,7 @@ void calc_dt_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
 
     START_PROFILING;
 
-    int min_vals_len = 3844*3844;
-    double* min_vals = (double*)malloc(sizeof(double)*min_vals_len);
-
-#pragma omp target data map(alloc: min_vals[:min_vals_len])
-    {
-#pragma omp target teams distribute if(offload) collapse(2) \
+#pragma omp target teams distribute if(offload)
         //#pragma omp parallel for
         for (int k = y_min; k <= y_max; k++)
         {
@@ -101,7 +96,7 @@ void calc_dt_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
                 double dsy = celldy[FTNREF1D(k,y_min-2)];
 
                 double cc = soundspeed[FTNREF2D(j,k,x_max+4,x_min-2,y_min-2)] *
-                    soundspeed[FTNREF2D(j,k,x_max+4,x_min-2,y_min-2)] + 
+                    soundspeed[FTNREF2D(j,k,x_max+4,x_min-2,y_min-2)] +
                     (2.0*viscosity[FTNREF2D(j,k,x_max+4,x_min-2,y_min-2)] /
                      density0[FTNREF2D(j,k,x_max+4,x_min-2,y_min-2)]);
                 cc = MAX(sqrt(cc),g_small);
@@ -140,7 +135,7 @@ void calc_dt_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
 
                 double dtdivt = (div < -g_small) ? dtdiv_safe*(-1.0/div) : g_big;
 
-                min_vals[FTNREF2D(j,k,3844,0,0)] = 
+                dt_min[FTNREF2D(j,k,_chunk.xmax+4,x_min-2,y_min-2)] =
                     MIN(dt_min_val, MIN(dtct, MIN(dtut, MIN(dtvt, dtdivt))));
             }
         }
@@ -150,10 +145,10 @@ void calc_dt_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         {
             for (int j = x_min; j <= x_max; j++)
             {
-                dt_min_val = MIN(dt_min_val, min_vals[FTNREF2D(j,k,3844,0,0)]);
+                dt_min_val = MIN(dt_min_val,
+                        dt_min[FTNREF2D(j,k,_chunk.xmax+4,x_min-2,y_min-2)]);
             }
         }
-    }
 
     STOP_PROFILING(__func__);
 
@@ -165,7 +160,7 @@ void calc_dt_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     xl_pos = cellx[FTNREF1D(j_ldt, x_min-2)];
     yl_pos = celly[FTNREF1D(k_ldt, y_min-2)];
 
-    if(dt_min_val < min_dt) 
+    if(dt_min_val < min_dt)
     {
         small=1;
     }
@@ -177,14 +172,14 @@ void calc_dt_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     *jldt=j_ldt;
     *kldt=k_ldt;
 
-    if(small != 0) 
+    if(small != 0)
     {
         printf("Timestep information:\n");
         printf("j, k                 :%i %i \n",j_ldt,k_ldt);
         printf("x, y                 :%f %f \n",xl_pos,yl_pos);
         printf("timestep : %f\n",dt_min_val);
         printf("Cell velocities;\n");
-        printf("%f %f \n", xvel0[FTNREF2D(j_ldt  ,k_ldt  ,x_max+5,x_min-2,y_min-2)], 
+        printf("%f %f \n", xvel0[FTNREF2D(j_ldt  ,k_ldt  ,x_max+5,x_min-2,y_min-2)],
                 yvel0[FTNREF2D(j_ldt  ,k_ldt  ,x_max+5,x_min-2,y_min-2)]);
         printf("%f %f \n", xvel0[FTNREF2D(j_ldt+1,k_ldt  ,x_max+5,x_min-2,y_min-2)],
                 yvel0[FTNREF2D(j_ldt+1,k_ldt  ,x_max+5,x_min-2,y_min-2)]);
@@ -193,7 +188,7 @@ void calc_dt_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         printf("%f %f \n",xvel0[FTNREF2D(j_ldt  ,k_ldt+1,x_max+5,x_min-2,y_min-2)],
                 yvel0[FTNREF2D(j_ldt  ,k_ldt+1,x_max+5,x_min-2,y_min-2)]);
         printf("density, energy, pressure, soundspeed \n");
-        printf("%f %f %f %f \n", 
+        printf("%f %f %f %f \n",
                 density0[FTNREF2D(j_ldt,k_ldt,x_max+4,x_min-2,y_min-2)],
                 energy0[FTNREF2D(j_ldt,k_ldt,x_max+4,x_min-2,y_min-2)],
                 pressure[FTNREF2D(j_ldt,k_ldt,x_max+4,x_min-2,y_min-2)],

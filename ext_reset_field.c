@@ -46,12 +46,9 @@ void reset_field_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
     
     START_PROFILING;
 
-#pragma omp target teams distribute \
-    collapse(2) if(offload)
-//#pragma omp parallel for
+#pragma omp target teams distribute if(offload)
     for (int k = y_min; k <= y_max; k++) 
     {
-//#pragma ivdep
         for (int j = x_min; j <= x_max; j++) 
         {
             density0[FTNREF2D(j  ,k  ,x_max+4,x_min-2,y_min-2)] =
@@ -59,12 +56,9 @@ void reset_field_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         }
     }
 
-#pragma omp target teams distribute \
-    collapse(2) if(offload)
-//#pragma omp parallel for 
+#pragma omp target teams distribute if(offload)
     for (int k = y_min; k <= y_max; k++) 
     {
-//#pragma ivdep
         for (int j = x_min; j <= x_max; j++) 
         {
             energy0[FTNREF2D(j  ,k  ,x_max+4,x_min-2,y_min-2)] =
@@ -72,12 +66,9 @@ void reset_field_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         }
     }
 
-#pragma omp target teams distribute \
-    collapse(2) if(offload)
-//#pragma omp parallel for 
+#pragma omp target teams distribute if(offload)
     for (int k = y_min; k <= y_max+1; k++) 
     {
-//#pragma ivdep
         for (int j = x_min; j <= x_max+1; j++) 
         {
             xvel0[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)] =
@@ -85,12 +76,9 @@ void reset_field_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
         }
     }
 
-#pragma omp target teams distribute \
-    collapse(2) if(offload)
-//#pragma omp parallel for 
+#pragma omp target teams distribute if(offload)
     for (int k = y_min; k <= y_max+1; k++) 
     {
-//#pragma ivdep
         for (int j = x_min; j <= x_max+1; j++) 
         {
             yvel0[FTNREF2D(j  ,k  ,x_max+5,x_min-2,y_min-2)] =

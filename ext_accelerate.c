@@ -50,12 +50,9 @@ void accelerate_kernel_c_(int *xmin,int *xmax,int *ymin,int *ymax,
 
     START_PROFILING;
 
-#pragma omp target teams distribute \
-    if(offload) collapse(2)
-//#pragma omp parallel for
+#pragma omp target teams distribute collapse(2)
     for (int k = y_min; k <= y_max + 1; k++) 
     {
-//#pragma ivdep
         for (int j = x_min;j <= x_max + 1; j++)
         {
             double nodal_mass=(

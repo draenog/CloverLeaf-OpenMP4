@@ -60,8 +60,7 @@ void pdv_kernel_c_(int *prdct,
 
     if(predict == 0) 
     {
-#pragma omp target teams distribute \
-        collapse(2) if(offload)
+#pragma omp target teams distribute if(offload)
 //#pragma omp parallel for
         for (int k = y_min; k <= y_max; k++) 
         {
@@ -128,8 +127,7 @@ void pdv_kernel_c_(int *prdct,
     }
     else
     {
-#pragma omp target teams distribute \
-        collapse(2) if(offload)
+#pragma omp target teams distribute if(offload)
 //#pragma omp parallel for
         for (int k = y_min; k <= y_max; k++) 
         {
