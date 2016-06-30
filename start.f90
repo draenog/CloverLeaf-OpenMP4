@@ -61,7 +61,7 @@ SUBROUTINE start
   chunk%task = parallel%task
 
   IF (use_c_kernels) THEN
-      CALL ext_init(g_offload)
+      CALL ext_init(x_cells, y_cells, g_offload)
   ENDIF
 
   !chunk_task_responsible_for = parallel%task+1

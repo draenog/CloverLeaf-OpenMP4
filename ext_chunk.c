@@ -1,8 +1,6 @@
 #include "ext_chunk.h"
 
-#pragma omp declare target
 CloverChunk _chunk;
-#pragma omp end declare target
 
 void ext_init_(
         int* xmax,
@@ -19,7 +17,7 @@ void ext_init_(
     _chunk.ymax = *ymax;
     *offload = _chunk.offload;
 
-#pragma omp target update if(_chunk.offload) to(_chunk)
+//#pragma omp target update if(_chunk.offload) to(_chunk)
 }
 
 void ext_finalise_()

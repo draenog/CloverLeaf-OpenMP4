@@ -59,7 +59,7 @@
 # e.g. make COMPILER=INTEL MPI_F90=mpiifort MPI_C=mpiicc DEBUG=1 IEEE=1 # will compile with the intel compiler with intel debug and ieee flags included
 
 COMPILER	= INTEL
-MODE	 	= none
+MODE	 	= offload
 MPI_F90		= mpiifort
 MPI_C		= mpiicc
 CPROFILER   = no
