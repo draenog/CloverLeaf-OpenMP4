@@ -58,10 +58,10 @@
 #        make IEEE=1              # Will select debug options as long as a compiler is selected as well
 # e.g. make COMPILER=INTEL MPI_F90=mpiifort MPI_C=mpiicc DEBUG=1 IEEE=1 # will compile with the intel compiler with intel debug and ieee flags included
 
-COMPILER	= CRAY
-MODE	 	= offload
-MPI_F90		= ftn
-MPI_C		= cc
+COMPILER	= INTEL
+MODE	 	= none
+MPI_F90		= mpiifort
+MPI_C		= mpiicc
 CPROFILER   = no
 
 ifeq ($(MODE), native)
