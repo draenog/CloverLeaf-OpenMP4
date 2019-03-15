@@ -138,7 +138,7 @@ OBJ	= $(patsubst %.c,%.o, $(wildcard *.c))
 OBJ	+= $(patsubst %.f90,%.o, $(wildcard *.f90))
 
 clover_leaf: Makefile $(OBJ)
-	$(MPI_F90) $(FLAGS)	$(OBJ) $(LDLIBS) -o clover_leaf
+	$(MPI_C) $(CFLAGS) $(OBJ) $(LDLIBS) -o clover_leaf
 	@echo $(MESSAGE)
 
 include make.deps
