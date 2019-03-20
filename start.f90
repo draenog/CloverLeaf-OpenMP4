@@ -57,7 +57,7 @@ SUBROUTINE start
   CALL clover_decompose(grid%x_cells,grid%y_cells,left,right,bottom,top)
 
   !create the chunks
-      
+
   chunk%task = parallel%task
 
   IF (use_c_kernels) THEN
@@ -68,7 +68,7 @@ SUBROUTINE start
 
   x_cells = right -left  +1
   y_cells = top   -bottom+1
-      
+
   chunk%left    = left
   chunk%bottom  = bottom
   chunk%right   = right
@@ -111,6 +111,48 @@ SUBROUTINE start
   ! at the end
   profiler_off=profiler_on
   profiler_on=.FALSE.
+
+  ! Map data arrays to device
+  DO tile = 1, tiles_per_chunk
+    CALL map_to_device_c(chunk%tiles(tile)%t_xmin, &
+            chunk%tiles(tile)%t_xmax, &
+            chunk%tiles(tile)%t_ymin, &
+            chunk%tiles(tile)%t_ymax, &
+            chunk%tiles(tile)%field%density0, &
+            chunk%tiles(tile)%field%density1, &
+            chunk%tiles(tile)%field%energy0, &
+            chunk%tiles(tile)%field%energy1, &
+            chunk%tiles(tile)%field%pressure, &
+            chunk%tiles(tile)%field%viscosity, &
+            chunk%tiles(tile)%field%soundspeed, &
+            chunk%tiles(tile)%field%xvel0, &
+            chunk%tiles(tile)%field%xvel1, &
+            chunk%tiles(tile)%field%yvel0, &
+            chunk%tiles(tile)%field%yvel1, &
+            chunk%tiles(tile)%field%vol_flux_x, &
+            chunk%tiles(tile)%field%vol_flux_y, &
+            chunk%tiles(tile)%field%mass_flux_x, &
+            chunk%tiles(tile)%field%mass_flux_y, &
+            chunk%tiles(tile)%field%work_array1, &
+            chunk%tiles(tile)%field%work_array2, &
+            chunk%tiles(tile)%field%work_array3, &
+            chunk%tiles(tile)%field%work_array4, &
+            chunk%tiles(tile)%field%work_array5, &
+            chunk%tiles(tile)%field%work_array6, &
+            chunk%tiles(tile)%field%work_array7, &
+            chunk%tiles(tile)%field%cellx, &
+            chunk%tiles(tile)%field%celly, &
+            chunk%tiles(tile)%field%vertexx, &
+            chunk%tiles(tile)%field%vertexy, &
+            chunk%tiles(tile)%field%celldx, &
+            chunk%tiles(tile)%field%celldy, &
+            chunk%tiles(tile)%field%vertexdx, &
+            chunk%tiles(tile)%field%vertexdy, &
+            chunk%tiles(tile)%field%xarea, &
+            chunk%tiles(tile)%field%yarea, &
+            chunk%tiles(tile)%field%volume, &
+            1)
+  END DO
 
   DO tile = 1, tiles_per_chunk
     CALL ideal_gas(tile,.FALSE.,0)
