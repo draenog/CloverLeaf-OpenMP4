@@ -7,7 +7,6 @@ ext_field_summary.o: ext_field_summary.c ftocmacros.h ext_chunk.h
 ext_flux_calc.o: ext_flux_calc.c ftocmacros.h ext_chunk.h
 ext_generate_chunk.o: ext_generate_chunk.c ftocmacros.h
 ext_ideal_gas.o: ext_ideal_gas.c ftocmacros.h ext_chunk.h
-ext_map_to_device.o: ext_map_to_device.c
 ext_initialise_chunk.o: ext_initialise_chunk.c ftocmacros.h
 ext_pack.o: ext_pack.c ftocmacros.h ext_chunk.h
 ext_pdv.o: ext_pdv.c ftocmacros.h ext_chunk.h
