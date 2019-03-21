@@ -62,6 +62,7 @@ COMPILER	= INTEL
 MODE	 	= offload
 MPI_F90		= mpiifort
 MPI_C		= mpiicc
+MPI_LD		= $(MPI_F90)
 CPROFILER   = no
 
 ifeq ($(MODE), native)
@@ -133,12 +134,13 @@ endif
 
 FLAGS=$(FLAGS_$(COMPILER)) $(OMP) $(I3E) $(OPTIONS) $(MIC)
 CFLAGS=$(CFLAGS_$(COMPILER)) $(OMP) $(I3E) $(C_OPTIONS) $(MIC) -c
+LDFLAGS=$(FLAGS)
 
 OBJ	= $(patsubst %.c,%.o, $(wildcard *.c))
 OBJ	+= $(patsubst %.f90,%.o, $(wildcard *.f90))
 
 clover_leaf: Makefile $(OBJ)
-	$(MPI_C) $(CFLAGS) $(OBJ) $(LDLIBS) -o clover_leaf
+	$(MPI_LD) $(LDFLAGS) $(OBJ) $(LDLIBS) -o clover_leaf
 	@echo $(MESSAGE)
 
 include make.deps
