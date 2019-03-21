@@ -67,13 +67,14 @@ void map_to_device_c_(int *xmin, int *xmax, int *ymin, int *ymax,
     int max = x_max * y_max;
 
  #pragma omp target enter data if(ideal_offload) \
-    map(to: density0[0:max], density1[0:max], energy0[0:max], energy1[0:max]) \
-    map(to: pressure[0:max], viscosity[0:max], soundspeed[0:max], xvel0[0:max]) \
-    map(to: xvel1[0:max], yvel0[0:max], yvel1[0:max], vol_flux_x[0:max]) \
-    map(to: mass_flux_x[0:max], vol_flux_y[0:max], mass_flux_y[0:max]) \
-    map(to: work_array1[0:max], work_array2[0:max], work_array3[0:max]) \
-    map(to: work_array4[0:max], work_array5[0:max], work_array6[0:max]) \
-    map(to: work_array7[0:max], cellx[0:x_max], celly[0:y_max], vertexx[0:x_max]) \
-    map(to: vertexy[0:y_max], celldx[0:x_max], celldy[0:y_max], vertexdx[0:x_max]) \
-    map(to: vertexdy[0:y_max], xarea[0:max], yarea[0:max], volume[0:max])
+    map(to: density0[0:(x_max+4)*(y_max+4)], density1[0:(x_max+4)*(y_max+4)], energy0[0:(x_max+4)*(y_max+4)], energy1[0:(x_max+4)*(y_max+4)]) \
+    map(to: pressure[0:(x_max+4)*(y_max+4)], viscosity[0:(x_max+4)*(y_max+4)], soundspeed[0:(x_max+4)*(y_max+4)], xvel0[0:(x_max+5)*(y_max+5)]) \
+    map(to: xvel1[0:(x_max+5)*(y_max+5)], yvel0[0:(x_max+5)*(y_max+5)], yvel1[0:(x_max+5)*(y_max+5)], vol_flux_x[0:(x_max+5)*(y_max+4)]) \
+    map(to: mass_flux_x[0:(x_max+5)*(y_max+4)], vol_flux_y[0:(x_max+4)*(y_max+5)], mass_flux_y[0:(x_max+4)*(y_max+5)]) \
+    map(to: work_array1[0:(x_max+5)*(y_max+5)], work_array2[0:(x_max+5)*(y_max+5)], work_array3[0:(x_max+5)*(y_max+5)]) \
+    map(to: work_array4[0:(x_max+5)*(y_max+5)], work_array5[0:(x_max+5)*(y_max+5)], work_array6[0:(x_max+5)*(y_max+5)]) \
+    map(to: work_array7[0:(x_max+5)*(y_max+5)], cellx[0:x_max+4], celly[0:y_max+4], vertexx[0:x_max+5]) \
+    map(to: vertexy[0:y_max+5], celldx[0:x_max+4], celldy[0:y_max+4], vertexdx[0:x_max+5]) \
+    map(to: vertexdy[0:y_max+5], xarea[0:(x_max+5)*(y_max+4)], yarea[0:(x_max+4)*(y_max+5)], volume[0:(x_max+4)*(y_max+4)])
 }
+
