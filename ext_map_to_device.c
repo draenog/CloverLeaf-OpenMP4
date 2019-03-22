@@ -78,3 +78,20 @@ void map_to_device_c_(int *xmin, int *xmax, int *ymin, int *ymax,
     map(to: vertexdy[0:y_max+5], xarea[0:(x_max+5)*(y_max+4)], yarea[0:(x_max+4)*(y_max+5)], volume[0:(x_max+4)*(y_max+4)])
 }
 
+void update_from_device_c_(int *xmin, int *xmax, int *ymin, int *ymax,
+                      double *density0,
+                      double *energy0,
+                      double *pressure,
+                      double *xvel0,
+                      double *yvel0)
+{
+    int x_min = *xmin;
+    int x_max = *xmax;
+    int y_min = *ymin;
+    int y_max = *ymax;
+
+#pragma omp target update if(_chunk.offload) \
+    from(density0[0:(x_max+4)*(y_max+4)], energy0[0:(x_max+4)*(y_max+4)], pressure[0:(x_max+4)*(y_max+4)]) \
+    from(xvel0[0:(x_max+5)*(y_max+5)], yvel0[0:(x_max+5)*(y_max+5)])
+}
+

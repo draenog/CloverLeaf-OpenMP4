@@ -168,9 +168,11 @@ SUBROUTINE hydro_step(xmin, xmax, ymin, ymax, density0, density1, &
 
     IF(time+g_small.GT.end_time.OR.step.GE.end_step) THEN
 
-        !$OMP TARGET UPDATE IF(g_offload)&
-        !$OMP from(density0, energy0, pressure) &
-        !$OMP from(xvel0, yvel0)
+        ! !$OMP TARGET UPDATE IF(g_offload)&
+        ! !$OMP from(density0, energy0, pressure) &
+        ! !$OMP from(xvel0, yvel0)
+        CALL update_from_device_c(xmin, xmax, ymin, ymax, &
+            density0, energy0, pressure, xvel0, yvel0)
 
         complete=.TRUE.
         CALL field_summary()
