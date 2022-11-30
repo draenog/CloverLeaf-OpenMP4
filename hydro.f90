@@ -82,6 +82,7 @@ SUBROUTINE hydro_step(xmin, xmax, ymin, ymax, density0, density1, &
 
     IMPLICIT NONE
 
+    INTEGER, PARAMETER :: offload = 0
     INTEGER         :: loc(1), xmin, ymin, xmax, ymax
     REAL(KIND=8)    :: timer,timerstart,wall_clock,step_clock
     REAL(KIND=8)    :: grind_time,cells,rstep
@@ -153,7 +154,7 @@ SUBROUTINE hydro_step(xmin, xmax, ymin, ymax, density0, density1, &
     time = time + dt
 
     IF(summary_frequency.NE.0) THEN
-        IF(MOD(step, summary_frequency).EQ.0) CALL field_summary()
+        IF(MOD(step, summary_frequency).EQ.0) CALL field_summary(offload)
     ENDIF
     IF(visit_frequency.NE.0) THEN
         IF(MOD(step, visit_frequency).EQ.0) CALL visit()
@@ -169,7 +170,7 @@ SUBROUTINE hydro_step(xmin, xmax, ymin, ymax, density0, density1, &
     IF(time+g_small.GT.end_time.OR.step.GE.end_step) THEN
 
         complete=.TRUE.
-        CALL field_summary()
+        CALL field_summary(offload)
         IF(visit_frequency.NE.0) CALL visit()
 
         wall_clock=timer() - timerstart
