@@ -58,10 +58,10 @@
 #        make IEEE=1              # Will select debug options as long as a compiler is selected as well
 # e.g. make COMPILER=INTEL MPI_F90=mpiifort MPI_C=mpiicc DEBUG=1 IEEE=1 # will compile with the intel compiler with intel debug and ieee flags included
 
-COMPILER	= INTEL
-MODE	 	= offload
-MPI_F90		= mpiifort
-MPI_C		= mpiicc
+COMPILER	= AOCC
+MODE	 	= none
+MPI_F90		= mpif90
+MPI_C		= mpicc
 CPROFILER   = no
 
 ifeq ($(MODE), native)
@@ -77,6 +77,7 @@ ifeq ($(CPROFILER), yes)
    OPTIONS += -DENABLE_PROFILING
 endif
 
+OMP_AOCC      = -fopenmp
 OMP_INTEL     = -openmp
 OMP_SUN       = -xopenmp=parallel -vpara
 OMP_GNU       = -fopenmp
@@ -86,6 +87,7 @@ OMP_PATHSCALE = -mp
 OMP_XL        = -qsmp=omp -qthreaded
 OMP=$(OMP_$(COMPILER))
 
+FLAGS_AOCC     = -O3 -g
 FLAGS_INTEL     = -O3 -no-prec-div
 FLAGS_SUN       = -fast -xipo=2 -Xlistv4
 FLAGS_GNU       = -O3 -march=native -funroll-loops
@@ -93,6 +95,7 @@ FLAGS_CRAY      = -em -ra -h acc_model=fast_addr:no_deep_copy:auto_async_all
 FLAGS_PGI       = -fastsse -Mipa=fast -Mlist
 FLAGS_PATHSCALE = -O3
 FLAGS_XL        = -O5 -qipa=partition=large -g -qfullpath -Q -qsigtrap -qextname=flush:ideal_gas_kernel_c:viscosity_kernel_c:pdv_kernel_c:revert_kernel_c:accelerate_kernel_c:flux_calc_kernel_c:advec_cell_kernel_c:advec_mom_kernel_c:reset_field_kernel_c:timer_c:unpack_top_bottom_buffers_c:pack_top_bottom_buffers_c:unpack_left_right_buffers_c:pack_left_right_buffers_c:field_summary_kernel_c:update_halo_kernel_c:generate_chunk_kernel_c:initialise_chunk_kernel_c:calc_dt_kernel_c:clover_unpack_message_bottom_c:clover_pack_message_bottom_c:clover_unpack_message_top_c:clover_pack_message_top_c:clover_unpack_message_right_c:clover_pack_message_right_c:clover_unpack_message_left_c:clover_pack_message_left_c -qlistopt -qattr=full -qlist -qreport -qxref=full -qsource -qsuppress=1506-224:1500-036FLAGS_          = -O3
+CFLAGS_AOCC     = -O3 -g -std=c99
 CFLAGS_INTEL     = -O3 -no-prec-div -restrict -fno-alias -std=c99
 CFLAGS_SUN       = -fast -xipo=2
 CFLAGS_GNU       = -O3 -march=native -funroll-loops
@@ -132,13 +135,13 @@ ifdef IEEE
 endif
 
 FLAGS=$(FLAGS_$(COMPILER)) $(OMP) $(I3E) $(OPTIONS) $(MIC)
-CFLAGS=$(CFLAGS_$(COMPILER)) $(OMP) $(I3E) $(C_OPTIONS) $(MIC) -c
+CFLAGS=$(CFLAGS_$(COMPILER)) $(OMP) $(I3E) $(C_OPTIONS) $(MIC)
 
 OBJ	= $(patsubst %.c,%.o, $(wildcard *.c))
 OBJ	+= $(patsubst %.f90,%.o, $(wildcard *.f90))
 
 clover_leaf: Makefile $(OBJ)
-	$(MPI_C) $(CFLAGS) $(OBJ) $(LDLIBS) -o clover_leaf
+	$(MPI_F90) $(CFLAGS) $(OBJ) $(LDLIBS) -o clover_leaf
 	@echo $(MESSAGE)
 
 include make.deps
